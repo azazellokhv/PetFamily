@@ -21,13 +21,14 @@ public class Pet
         Address address,
         int weight,
         int height,
-        int contactPhone,
+        string contactPhone,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
         DetailsForAssistance detailsForAssistance)
     {
+        Id = new Guid();
         Nickname = nickname;
         BiologicalSpecies = biologicalSpecies;
         Description = description;
@@ -43,6 +44,7 @@ public class Pet
         IsVaccinated = isVaccinated;
         AssistanceStatus = assistanceStatus;
         DetailsForAssistance = detailsForAssistance;
+        DateOfCreation = DateTime.UtcNow;
     }
     
     public Guid Id { get; private set; }
@@ -55,14 +57,13 @@ public class Pet
     public Address Address { get; private set; }
     public int Weight { get; private set; }
     public int Height { get; private set; }
-    public int ContactPhone { get; private set; }
+    public string ContactPhone { get; private set; }
     public bool IsNeutered { get; private set; }
     public DateOnly Birthday { get; private set; }
     public bool IsVaccinated { get; private set; }
     public AssistanceStatus AssistanceStatus { get; private set; }
     public DetailsForAssistance DetailsForAssistance { get; private set; }
     public DateTime DateOfCreation { get; private set; }
-
 
     public static Result<Pet> Create(
         string nickname,
@@ -74,7 +75,7 @@ public class Pet
         Address address,
         int weight,
         int height,
-        int contactPhone,
+        string contactPhone,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
@@ -83,25 +84,22 @@ public class Pet
     {
         if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > MAX_NICKNAME_LENGTH)
             return Result.Failure<Pet>("Не указана кличка питомца");
-
-        if (string.IsNullOrWhiteSpace(biologicalSpecies.Title))
-            return Result.Failure<Pet>("Не указан вид питомца");
         
-        if (string.IsNullOrWhiteSpace(address.Country) || 
-            string.IsNullOrWhiteSpace(address.Locality) ||
-            string.IsNullOrWhiteSpace(address.Street) ||
-            string.IsNullOrWhiteSpace(address.BuildingNumber))
-            return Result.Failure<Pet>("Не полностью указан адрес нахождения питомца");
-        
-        if (contactPhone != 11)
+        if (contactPhone.Length != 11 && IsDigitsOnly(contactPhone))
             return Result.Failure<Pet>("Не верно указан контактный номер телефона");
-        
-        if (string.IsNullOrWhiteSpace(assistanceStatus.Title))
-            return Result.Failure<Pet>("Не указан статус помощи");
 
         var pet = new Pet(nickname, biologicalSpecies, description, breed, colorPet, health, address, weight,
             height, contactPhone, isNeutered, birthday, isVaccinated, assistanceStatus, detailsForAssistance);
 
         return Result.Success(pet);
+    }
+    private static bool IsDigitsOnly(string checkString)
+    {
+        foreach (char c in checkString)
+        {
+            if (c < '0' || c > '9')
+                return false;
+        }
+        return true;
     }
 }
