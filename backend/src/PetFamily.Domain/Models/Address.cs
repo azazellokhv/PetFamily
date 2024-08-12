@@ -7,15 +7,12 @@ public class Address
 {
     private Address(string country, string locality, string street, string buildingNumber, string comments)
     {
-        Id = new Guid(); 
         Country = country;
         Locality = locality;
         Street = street;
         BuildingNumber = buildingNumber;
         Comments = comments;
     }
-    public Guid Id { get; private set; }
-
     public string Country { get; private set; }
     
     public string Locality { get; private set; }

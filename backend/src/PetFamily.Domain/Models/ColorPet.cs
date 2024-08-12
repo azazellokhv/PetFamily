@@ -7,10 +7,8 @@ public class ColorPet
 {
     private ColorPet(string title)
     {
-        Id = new Guid();
         Title = title;
     }
-    public Guid Id { get; private set; }
     public string Title { get; private set; }
     
     public static Result<ColorPet> Create(string title)

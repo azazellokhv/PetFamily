@@ -10,8 +10,4 @@
       <ProjectReference Include="..\PetFamily.Application\PetFamily.Application.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5" />
-    </ItemGroup>
-
 </Project>

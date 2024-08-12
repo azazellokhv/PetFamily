@@ -5,7 +5,8 @@ namespace PetFamily.Domain.Models;
 //информация об оказании помощи
 public class DetailsForAssistance 
 {
-    private DetailsForAssistance(string title, string description, string contactPhoneAssistance, string bankCardAssistance)
+    
+    private DetailsForAssistance(string title, string description, string? contactPhoneAssistance, string bankCardAssistance)
     {
         Id = new Guid();
         Title = title;
@@ -16,26 +17,24 @@ public class DetailsForAssistance
     public Guid Id { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
-    public string ContactPhoneAssistance { get; private set; }
+    public string? ContactPhoneAssistance { get; private set; }
     public string BankCardAssistance { get; private set; }
 
-    public static Result<DetailsForAssistance> Create(string title, string description, string contactPhoneAssistance,
+    public static Result<DetailsForAssistance> Create(string title, string description, string? contactPhoneAssistance,
         string bankCardAssistance)
     {
-        if (contactPhoneAssistance.Length != 11 && IsDigitsOnly(contactPhoneAssistance))
+        if (contactPhoneAssistance?.Length != Pet.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
             return Result.Failure<DetailsForAssistance>("Не верно указан контактный номер телефона");
         
         var detailsForAssistance = new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
 
         return Result.Success(detailsForAssistance);
     }
-    private static bool IsDigitsOnly(string checkString)
+    private static bool IsDigitsOnly(string? checkString)
     {
-        foreach (char c in checkString)
-        {
-            if (c < '0' || c > '9')
-                return false;
-        }
-        return true;
+        if (checkString == null) 
+            return false;
+        
+        return checkString.All(c => c >= '0' && c <= '9');
     }
 }

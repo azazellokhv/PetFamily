@@ -5,6 +5,7 @@ namespace PetFamily.Domain.Models;
 public class Pet
 {
     public const int MAX_NICKNAME_LENGTH = 100;
+    public const int LENGTH_PHONE_NUMBER = 100;
     
     //For EF core
     private Pet()
@@ -15,7 +16,6 @@ public class Pet
         string nickname,
         BiologicalSpecies biologicalSpecies, 
         string description, 
-        Breed breed, 
         ColorPet colorPet,
         Health health,
         Address address,
@@ -32,7 +32,6 @@ public class Pet
         Nickname = nickname;
         BiologicalSpecies = biologicalSpecies;
         Description = description;
-        Breed = breed;
         ColorPet = colorPet;
         Health = health;
         Address = address;
@@ -51,7 +50,6 @@ public class Pet
     public string Nickname { get; private set; }
     public BiologicalSpecies BiologicalSpecies { get; private set; }
     public string Description { get; private set; } = default!;
-    public Breed Breed { get; private set; }
     public ColorPet ColorPet { get; private set; }
     public Health Health { get; private set; }
     public Address Address { get; private set; }
@@ -85,21 +83,19 @@ public class Pet
         if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > MAX_NICKNAME_LENGTH)
             return Result.Failure<Pet>("Не указана кличка питомца");
         
-        if (contactPhone.Length != 11 && IsDigitsOnly(contactPhone))
+        if (contactPhone.Length != LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
             return Result.Failure<Pet>("Не верно указан контактный номер телефона");
 
-        var pet = new Pet(nickname, biologicalSpecies, description, breed, colorPet, health, address, weight,
+        var pet = new Pet(nickname, biologicalSpecies, description, colorPet, health, address, weight,
             height, contactPhone, isNeutered, birthday, isVaccinated, assistanceStatus, detailsForAssistance);
 
         return Result.Success(pet);
     }
-    private static bool IsDigitsOnly(string checkString)
+    private static bool IsDigitsOnly(string? checkString)
     {
-        foreach (char c in checkString)
-        {
-            if (c < '0' || c > '9')
-                return false;
-        }
-        return true;
+        if (checkString == null) 
+            return false;
+        
+        return checkString.All(c => c >= '0' && c <= '9');
     }
 }

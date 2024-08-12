@@ -7,11 +7,9 @@ public class AssistanceStatus
 {
     private AssistanceStatus(string title)
     {
-        Id = new Guid();
-        Title = title;
+       Title = title;
     }
-    public Guid Id { get; private set; }
-
+    
     public string Title { get; private set; }
 
     public static Result<AssistanceStatus> Create(string title)
