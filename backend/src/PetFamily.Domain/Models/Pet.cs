@@ -4,10 +4,10 @@ namespace PetFamily.Domain.Models;
 
 public class Pet
 {
-    public const int MAX_NICKNAME_LENGTH = 100;
+    public const int MAX_NAME_LENGTH = 100;
     public const int LENGTH_PHONE_NUMBER = 100;
     
-    //For EF core
+    //For EF Сore
     private Pet()
     {
     }
@@ -80,7 +80,7 @@ public class Pet
         AssistanceStatus assistanceStatus,
         DetailsForAssistance detailsForAssistance)
     {
-        if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > MAX_NICKNAME_LENGTH)
+        if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > MAX_NAME_LENGTH)
             return Result.Failure<Pet>("Не указана кличка питомца");
         
         if (contactPhone.Length != LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
