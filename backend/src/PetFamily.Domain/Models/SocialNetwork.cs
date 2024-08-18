@@ -9,8 +9,8 @@ public record SocialNetwork
         Title = title;
         Link = link;
     }
-    public string Title { get; private set; }
-    public string Link { get; private set; }
+    public string Title { get; }
+    public string Link { get; }
 
     public static Result<SocialNetwork> Create(string title, string link)
     {

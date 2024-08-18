@@ -11,8 +11,8 @@ public record Health
         DescriptionDisease = descriptionDisease;
     }
     
-    public bool IsHealthy { get; private set; }
-    public string DescriptionDisease { get; private set; }
+    public bool IsHealthy { get; }
+    public string DescriptionDisease { get; }
 
     public static Result<Health> Create(bool isHealthy, string descriptionDisease)
     {

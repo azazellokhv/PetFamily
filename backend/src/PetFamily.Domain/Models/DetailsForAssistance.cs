@@ -17,10 +17,10 @@ public record DetailsForAssistance
         ContactPhoneAssistance = contactPhoneAssistance;
         BankCardAssistance = bankCardAssistance;
     }
-    public string Title { get; private set; } = default!;
-    public string Description { get; private set; } = default!;
-    public string ContactPhoneAssistance { get; private set; } = default!;
-    public string BankCardAssistance { get; private set; } = default!;
+    public string Title { get; } = default!;
+    public string Description { get; } = default!;
+    public string ContactPhoneAssistance { get; } = default!;
+    public string BankCardAssistance { get; } = default!;
 
     public static Result<DetailsForAssistance> Create(
         string title, 

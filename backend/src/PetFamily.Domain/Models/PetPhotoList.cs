@@ -2,5 +2,5 @@
 
 public record PetPhotoList
 {
-    public List<PetPhoto> Photos { get; private set; }
+    public List<PetPhoto> Photos { get; }
 }
