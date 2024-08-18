@@ -3,20 +3,24 @@
 namespace PetFamily.Domain.Models;
 
 //порода питомца
-public class Breed
+public class Breed : Shared.Entity<BreedId>
 {
-    private Breed(string title)
+    //For EF Сore
+    private Breed (BreedId id) : base(id)
     {
-        Id = new Guid();
+    }
+    private Breed(BreedId breedId, string title) 
+        : base(breedId)
+    {
         Title = title;
     }
-    public Guid Id { get; private set; }
     public string Title { get; private set; }
-    
-    public static Result<Breed> Create(string title)
-    {
-        var breed = new Breed(title);
 
-        return Result.Success(breed);
-    } 
+    public static Result<Breed> Create(BreedId breedId, string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return Result.Failure<Breed>("Не указана порода питомца");
+        
+        return new Breed(breedId, title);
+    }
 }

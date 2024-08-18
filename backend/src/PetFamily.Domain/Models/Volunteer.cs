@@ -1,18 +1,22 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.Models;
 
-public class Volunteer
+public sealed class Volunteer : Shared.Entity<VolunteerId>
 {
+
+   
     private readonly List<Pet> _pets = default!;
+    private readonly List<SocialNetwork> _socialNetworks = default!;
     
     //For EF Сore
-    private Volunteer()
+    private Volunteer(VolunteerId id) : base(id)
     {
     }
     
     private Volunteer(
-        Guid id, 
+        VolunteerId volunteerId,
         FullName fullName, 
         string description, 
         int workExperience, 
@@ -20,12 +24,10 @@ public class Volunteer
         int countPetsNeedHome, 
         int countPetsTreated, 
         string contactPhone, 
-        SocialNetwork socialNetwork,
-        DetailsForAssistance detailsForAssistance,
-        IEnumerable<Pet> pets)
+        VolunteerDetails volunteerDetails)
+        : base(volunteerId)
     
     {
-        Id = new Guid();
         FullName = fullName;
         Description = description;
         WorkExperience = workExperience;
@@ -33,22 +35,18 @@ public class Volunteer
         CountPetsNeedHome = countPetsNeedHome;
         CountPetsTreated = countPetsTreated;
         ContactPhone = contactPhone;
-        SocialNetwork = socialNetwork;
-        DetailsForAssistance = detailsForAssistance;
+        VolunteerDetails = volunteerDetails;
         
     }
-    
-    public Guid Id { get; private set; }
+
     public FullName FullName { get; private set; }
     public string Description { get; private set; }
     public int WorkExperience { get; private set; }
-    public int CountPetsFindHome { get; private set; }
-    public int CountPetsNeedHome { get; private set; }
-    public int CountPetsTreated { get; private set; }
+    public int CountPetsFindHome { get; private set; } //будет метод
+    public int CountPetsNeedHome { get; private set; } //будет метод
+    public int CountPetsTreated { get; private set; } //будет метод
     public string ContactPhone { get; private set; }
-    public SocialNetwork SocialNetwork { get; private set; }
-    public DetailsForAssistance DetailsForAssistance { get; private set; }
-    
+    public VolunteerDetails VolunteerDetails { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
     public void AddPat(Pet pet)
@@ -57,7 +55,7 @@ public class Volunteer
     }
 
     public static Result<Volunteer> Create(
-        Guid id, 
+        VolunteerId volunteerId, 
         FullName fullName, 
         string description, 
         int workExperience, 
@@ -65,34 +63,28 @@ public class Volunteer
         int countPetsNeedHome, 
         int countPetsTreated, 
         string contactPhone, 
-        SocialNetwork socialNetwork,
-        DetailsForAssistance detailsForAssistance,
-        IEnumerable<Pet> pets)
+        VolunteerDetails volunteerDetails)
     {
-        if (workExperience < 0 || workExperience > 100)
+        if (workExperience < Constants.MIN_WORK_EXPERIENCE ||
+            workExperience > Constants.MAX_WORK_EXPERIENCE)
             return Result.Failure<Volunteer>("Не верно указан опыт работы"); 
         
-        if (countPetsFindHome < 0)
+        if (countPetsFindHome < Constants.MIN_PETS_FIND_HOME)
             return Result.Failure<Volunteer>("Не верно указано количество найденых питомцев"); 
         
-        if (contactPhone.Length != Pet.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
+        if (contactPhone.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
             return Result.Failure<Volunteer>("Не верно указан контактный номер телефона");
         
-
-        var volunteer = new Volunteer(
-            id, 
-            fullName, 
-            description, 
-            workExperience, 
-            countPetsFindHome, 
-            countPetsNeedHome, 
-            countPetsTreated, 
-            contactPhone, 
-            socialNetwork,
-            detailsForAssistance,
-            pets);
-
-        return Result.Success(volunteer);
+        return new Volunteer(
+                           volunteerId, 
+                           fullName, 
+                           description, 
+                           workExperience, 
+                           countPetsFindHome, 
+                           countPetsNeedHome, 
+                           countPetsTreated, 
+                           contactPhone, 
+                           volunteerDetails);
 
     }
     private static bool IsDigitsOnly(string? checkString)

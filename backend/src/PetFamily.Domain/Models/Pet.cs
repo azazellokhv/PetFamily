@@ -1,22 +1,22 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.Models;
 
-public class Pet
+public class Pet : Shared.Entity<PetId>
 {
-    public const int MAX_NAME_LENGTH = 100;
-    public const int LENGTH_PHONE_NUMBER = 100;
-    
+
     //For EF Сore
-    private Pet()
+    private Pet (PetId id) : base(id)
     {
     }
 
     private Pet(
+        PetId petId,
         string nickname,
         BiologicalSpecies biologicalSpecies, 
         string description, 
-        ColorPet colorPet,
+        string colorPet,
         Health health,
         Address address,
         int weight,
@@ -26,9 +26,10 @@ public class Pet
         DateOnly birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
-        DetailsForAssistance detailsForAssistance)
+        DetailsForAssistance detailsForAssistance,
+        PetPhotoList petPhotoList)
+        : base(petId)
     {
-        Id = new Guid();
         Nickname = nickname;
         BiologicalSpecies = biologicalSpecies;
         Description = description;
@@ -44,14 +45,14 @@ public class Pet
         AssistanceStatus = assistanceStatus;
         DetailsForAssistance = detailsForAssistance;
         DateOfCreation = DateTime.UtcNow;
+        PetPhotoList = petPhotoList;
     }
-    
-    public Guid Id { get; private set; }
+
     public string Nickname { get; private set; }
     public BiologicalSpecies BiologicalSpecies { get; private set; }
     public string Description { get; private set; } = default!;
-    public ColorPet ColorPet { get; private set; }
-    public Health Health { get; private set; }
+    public string ColorPet { get; private set; } = default!;
+    public Health Health { get; private set; } = default!;
     public Address Address { get; private set; }
     public int Weight { get; private set; }
     public int Height { get; private set; }
@@ -62,13 +63,17 @@ public class Pet
     public AssistanceStatus AssistanceStatus { get; private set; }
     public DetailsForAssistance DetailsForAssistance { get; private set; }
     public DateTime DateOfCreation { get; private set; }
+    public PetPhotoList? PetPhotoList { get; private set; }
+
+
 
     public static Result<Pet> Create(
+        PetId petId,
         string nickname,
         BiologicalSpecies biologicalSpecies,
         string description,
         Breed breed,
-        ColorPet colorPet,
+        string colorPet,
         Health health,
         Address address,
         int weight,
@@ -78,18 +83,32 @@ public class Pet
         DateOnly birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
-        DetailsForAssistance detailsForAssistance)
+        DetailsForAssistance detailsForAssistance,
+        PetPhotoList petPhotoList)
     {
-        if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > MAX_NAME_LENGTH)
+        if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > Constants.MAX_NAME_LENGTH)
             return Result.Failure<Pet>("Не указана кличка питомца");
         
-        if (contactPhone.Length != LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
+        if (contactPhone.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
             return Result.Failure<Pet>("Не верно указан контактный номер телефона");
 
-        var pet = new Pet(nickname, biologicalSpecies, description, colorPet, health, address, weight,
-            height, contactPhone, isNeutered, birthday, isVaccinated, assistanceStatus, detailsForAssistance);
-
-        return Result.Success(pet);
+        return new Pet(
+            petId, 
+            nickname, 
+            biologicalSpecies, 
+            description, 
+            colorPet, 
+            health, 
+            address, 
+            weight, 
+            height, 
+            contactPhone, 
+            isNeutered, 
+            birthday, 
+            isVaccinated, 
+            assistanceStatus, 
+            detailsForAssistance,
+            petPhotoList);
     }
     private static bool IsDigitsOnly(string? checkString)
     {

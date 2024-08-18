@@ -3,7 +3,7 @@
 namespace PetFamily.Domain.Models;
 
 //статус помощи
-public class AssistanceStatus 
+public record AssistanceStatus 
 {
     private AssistanceStatus(string title)
     {
