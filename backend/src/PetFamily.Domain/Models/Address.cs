@@ -3,7 +3,7 @@
 namespace PetFamily.Domain.Models;
 
 //адрес нахождения питомца
-public class Address 
+public record Address 
 {
     private Address(string country, string locality, string street, string buildingNumber, string comments)
     {

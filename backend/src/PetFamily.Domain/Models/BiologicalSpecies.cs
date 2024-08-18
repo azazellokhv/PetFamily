@@ -3,25 +3,32 @@
 namespace PetFamily.Domain.Models;
 
 //вид питомца
-public class BiologicalSpecies 
+public class BiologicalSpecies : Shared.Entity<BiologicalSpeciesId>
 {
-    private BiologicalSpecies(string name, Breed breed)
+    private readonly List<Breed> _breeds = [];
+    //For EF Сore
+    private BiologicalSpecies (BiologicalSpeciesId id) : base(id)
     {
-        Id = new Guid();
-        Name = name;
-        Breed = breed;
     }
-    public Guid Id { get; private set; }
-    public string Name { get; private set; }
-    public Breed Breed { get; private set; }
+    private BiologicalSpecies(BiologicalSpeciesId biologicalSpeciesId, string name)
+        : base(biologicalSpeciesId)
+    {
+        Name = name; 
+    }
     
-    public static Result<BiologicalSpecies> Create(string name, Breed breed)
+    public string Name { get; private set; }
+    public IReadOnlyList<Breed> Breeds => _breeds;
+    public void AddBreed(Breed breed)
+    {
+        _breeds.Add(breed);
+    }
+    public static Result<BiologicalSpecies> Create(
+        BiologicalSpeciesId biologicalSpeciesId, 
+        string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<BiologicalSpecies>("Не указан вид питомца");
 
-        var biologicalSpecies = new BiologicalSpecies(name, breed);
-
-        return Result.Success(biologicalSpecies);
+        return new BiologicalSpecies(biologicalSpeciesId, name);
     }
 }

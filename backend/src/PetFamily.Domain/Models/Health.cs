@@ -3,7 +3,7 @@
 namespace PetFamily.Domain.Models;
 
 //информация о здоровье питомца
-public class Health 
+public record Health 
 {
     private Health(bool isHealthy, string descriptionDisease)
     {

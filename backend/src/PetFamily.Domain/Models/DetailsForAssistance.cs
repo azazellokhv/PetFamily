@@ -1,34 +1,37 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.Models;
 
 //информация об оказании помощи
-public class DetailsForAssistance 
+public record DetailsForAssistance
 {
-    
-    private DetailsForAssistance(string title, string description, string? contactPhoneAssistance, string bankCardAssistance)
+    private DetailsForAssistance(
+        string title, 
+        string description, 
+        string? contactPhoneAssistance, 
+        string bankCardAssistance)
     {
-        Id = new Guid();
         Title = title;
         Description = description;
         ContactPhoneAssistance = contactPhoneAssistance;
         BankCardAssistance = bankCardAssistance;
     }
-    public Guid Id { get; private set; }
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public string? ContactPhoneAssistance { get; private set; }
-    public string BankCardAssistance { get; private set; }
+    public string Title { get; private set; } = default!;
+    public string Description { get; private set; } = default!;
+    public string ContactPhoneAssistance { get; private set; } = default!;
+    public string BankCardAssistance { get; private set; } = default!;
 
-    public static Result<DetailsForAssistance> Create(string title, string description, string? contactPhoneAssistance,
+    public static Result<DetailsForAssistance> Create(
+        string title, 
+        string description, 
+        string contactPhoneAssistance,
         string bankCardAssistance)
     {
-        if (contactPhoneAssistance?.Length != Pet.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
+        if (contactPhoneAssistance?.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
             return Result.Failure<DetailsForAssistance>("Не верно указан контактный номер телефона");
         
-        var detailsForAssistance = new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
-
-        return Result.Success(detailsForAssistance);
+        return new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
     }
     private static bool IsDigitsOnly(string? checkString)
     {
