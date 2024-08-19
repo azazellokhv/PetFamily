@@ -36,7 +36,6 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         CountPetsTreated = countPetsTreated;
         ContactPhone = contactPhone;
         VolunteerDetails = volunteerDetails;
-        
     }
 
     public FullName FullName { get; private set; }

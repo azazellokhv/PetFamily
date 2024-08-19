@@ -14,7 +14,7 @@ public class Pet : Shared.Entity<PetId>
     private Pet(
         PetId petId,
         string nickname,
-        BiologicalSpecies biologicalSpecies, 
+        PetType petType, 
         string description, 
         string colorPet,
         Health health,
@@ -31,7 +31,7 @@ public class Pet : Shared.Entity<PetId>
         : base(petId)
     {
         Nickname = nickname;
-        BiologicalSpecies = biologicalSpecies;
+        PetType = petType;
         Description = description;
         ColorPet = colorPet;
         Health = health;
@@ -49,7 +49,7 @@ public class Pet : Shared.Entity<PetId>
     }
 
     public string Nickname { get; private set; }
-    public BiologicalSpecies BiologicalSpecies { get; private set; }
+    public PetType PetType { get; private set; }
     public string Description { get; private set; } = default!;
     public string ColorPet { get; private set; } = default!;
     public Health Health { get; private set; } = default!;
@@ -65,12 +65,10 @@ public class Pet : Shared.Entity<PetId>
     public DateTime DateOfCreation { get; private set; }
     public PetPhotoList? PetPhotoList { get; private set; }
 
-
-
     public static Result<Pet> Create(
         PetId petId,
         string nickname,
-        BiologicalSpecies biologicalSpecies,
+        PetType petType,
         string description,
         Breed breed,
         string colorPet,
@@ -95,7 +93,7 @@ public class Pet : Shared.Entity<PetId>
         return new Pet(
             petId, 
             nickname, 
-            biologicalSpecies, 
+            petType, 
             description, 
             colorPet, 
             health, 

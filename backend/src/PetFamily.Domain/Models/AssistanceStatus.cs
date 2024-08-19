@@ -11,7 +11,7 @@ public record AssistanceStatus
     }
     
     public string Title { get; private set; }
-
+    
     public static Result<AssistanceStatus> Create(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
