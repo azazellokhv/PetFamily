@@ -13,14 +13,11 @@ public record Address
         BuildingNumber = buildingNumber;
         Comments = comments;
     }
-    public string Country { get; private set; }
-    
-    public string Locality { get; private set; }
-    
-    public string Street { get; private set; }
-    
-    public string BuildingNumber { get; private set; }
-    public string Comments { get; private set; }
+    public string Country { get; }
+    public string Locality { get; }
+    public string Street { get; }
+    public string BuildingNumber { get; }
+    public string Comments { get; }
 
     public static Result<Address> Create(string country, string locality, string street, string buildingNumber,
         string comments)

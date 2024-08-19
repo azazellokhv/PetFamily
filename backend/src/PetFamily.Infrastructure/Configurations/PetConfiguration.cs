@@ -21,12 +21,21 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.Property(p => p.Nickname)
             .IsRequired()
             .HasMaxLength(Constants.MAX_NAME_LENGTH);
-        
-        builder.HasOne(p => p.BiologicalSpecies)
-            .WithMany()
-            .HasForeignKey("pit_Id")
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.ComplexProperty(p => p.PetType, pt =>
+        {
+            pt.Property(bs => bs.BiologicalSpeciesId)
+                .HasConversion(
+                    id => id.Value,
+                    value => BiologicalSpeciesId.Create(value))
+                .IsRequired();
+
+            pt.Property(b => b.BreedId)
+                .HasConversion(
+                    id => id.Value,
+                    value => BreedId.Create(value))
+                .IsRequired();
+        });
         
         builder.Property(p => p.Description)
             .IsRequired()
