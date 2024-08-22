@@ -15,8 +15,6 @@ public class CreateVolunteerHandler
     public async Task<Result<Guid, string>> Handle(
         CreateVolunteerRequest request, CancellationToken cancellationToken = default)
     {
-        
-        
         var volunteerId = VolunteerId.NewVolunteerId();
         
         var fullNameResult = FullName.Create(request.LastName, request.FirstName, request.Patronymic); 
@@ -27,9 +25,8 @@ public class CreateVolunteerHandler
         var workExperienceResult = request.WorkExperience;
         var contactPhoneResult = request.ContactPhone;
         var volunteerDetailsResult = new VolunteerDetails();
-        
-        
-        var volunteerResult = new Volunteer(
+
+        var volunteerResult = Volunteer.Create(
             volunteerId, 
             fullNameResult.Value, 
             descriptionResult,
@@ -37,7 +34,7 @@ public class CreateVolunteerHandler
             contactPhoneResult,
             volunteerDetailsResult);
         
-        await _volunteersRepository.Add(volunteerResult, cancellationToken);
+        await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);
 
         return volunteerId.Value;
     }

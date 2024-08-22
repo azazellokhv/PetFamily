@@ -5,17 +5,14 @@ namespace PetFamily.Domain.Models;
 
 public sealed class Volunteer : Shared.Entity<VolunteerId>
 {
-
-   
     private readonly List<Pet> _pets = default!;
-    private readonly List<SocialNetwork> _socialNetworks = default!;
     
     //For EF Сore
     private Volunteer(VolunteerId id) : base(id)
     {
     }
     
-    public Volunteer(
+    private Volunteer(
         VolunteerId volunteerId,
         FullName fullName, 
         string description, 
@@ -35,19 +32,21 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public FullName FullName { get; private set; }
     public string Description { get; private set; }
     public int WorkExperience { get; private set; }
-    //public int CountPetsFindHome { get; private set; } //будет метод
-    //public int CountPetsNeedHome { get; private set; } //будет метод
-    //public int CountPetsTreated { get; private set; } //будет метод
+ 
     public string ContactPhone { get; private set; }
     public VolunteerDetails? VolunteerDetails { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
-    public void AddPat(Pet pet)
-    {
-        _pets.Add(pet);
-    }
+    public void AddPat(Pet pet) => _pets.Add(pet);
 
-    /*public static Result<Volunteer> Create(
+    public int CountPetsFindHome() =>
+        _pets.Count(p => p.AssistanceStatus.Title == "");
+    public int CountPetsNeedHome() =>
+        _pets.Count(p => p.AssistanceStatus.Title == "");
+    public int CountPetsTreated => 
+        _pets.Count(p => p.AssistanceStatus.Title == "");
+    
+    public static Result<Volunteer> Create(
         VolunteerId volunteerId, 
         FullName fullName, 
         string description, 
@@ -78,5 +77,5 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
             return false;
         
         return checkString.All(c => c >= '0' && c <= '9');
-    }*/
+    }
 }
