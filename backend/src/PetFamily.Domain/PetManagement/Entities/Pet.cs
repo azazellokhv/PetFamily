@@ -1,21 +1,24 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.BiologicalSpeciesManagement.Entities;
+using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
+using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Ids;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.PetManagement.Entities;
 
 public class Pet : Shared.Entity<PetId>
 {
-
     //For EF Сore
-    private Pet (PetId id) : base(id)
+    private Pet(PetId id) : base(id)
     {
     }
 
     private Pet(
         PetId petId,
         string nickname,
-        PetType petType, 
-        string description, 
+        PetType petType,
+        string description,
         string colorPet,
         Health health,
         Address address,
@@ -86,33 +89,34 @@ public class Pet : Shared.Entity<PetId>
     {
         if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > Constants.MAX_NAME_LENGTH)
             return Result.Failure<Pet>("Не указана кличка питомца");
-        
+
         if (contactPhone.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
             return Result.Failure<Pet>("Не верно указан контактный номер телефона");
 
         return new Pet(
-            petId, 
-            nickname, 
-            petType, 
-            description, 
-            colorPet, 
-            health, 
-            address, 
-            weight, 
-            height, 
-            contactPhone, 
-            isNeutered, 
-            birthday, 
-            isVaccinated, 
-            assistanceStatus, 
+            petId,
+            nickname,
+            petType,
+            description,
+            colorPet,
+            health,
+            address,
+            weight,
+            height,
+            contactPhone,
+            isNeutered,
+            birthday,
+            isVaccinated,
+            assistanceStatus,
             detailsForAssistance,
             petPhotoList);
     }
+
     private static bool IsDigitsOnly(string? checkString)
     {
-        if (checkString == null) 
+        if (checkString == null)
             return false;
-        
+
         return checkString.All(c => c >= '0' && c <= '9');
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.Ids;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 
 public record PetType
 {

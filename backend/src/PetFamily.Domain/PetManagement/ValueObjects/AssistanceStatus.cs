@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 //статус помощи
 public record AssistanceStatus 
@@ -10,7 +10,7 @@ public record AssistanceStatus
        Title = title;
     }
     
-    public string Title { get; private set; }
+    public string Title { get; }
     
     public static Result<AssistanceStatus> Create(string title)
     {

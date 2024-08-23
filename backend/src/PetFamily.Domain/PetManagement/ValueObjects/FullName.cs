@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.Shared;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 public record FullName
 {
@@ -10,9 +10,8 @@ public record FullName
         LastName = lastName;
         FirstName = firstName;
         Patronymic = patronymic;
-        
     }
-    
+
     public string LastName { get; }
     public string FirstName { get; }
     public string Patronymic { get; }
@@ -23,11 +22,9 @@ public record FullName
             firstName.Length > Constants.MAX_NAME_LENGTH ||
             patronymic.Length > Constants.MAX_NAME_LENGTH)
             return Result.Failure<FullName>("Фамилия, имя или отчество превышают предельную длину");
-        
+
         var fullName = new FullName(lastName, firstName, patronymic);
-        
+
         return Result.Success(fullName);
     }
-    
-
 }
