@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.BiologicalSpeciesManagement.Entities;
+using PetFamily.Domain.Shared.Ids;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.BiologicalSpeciesManagement.AggregateRoot;
 
 //вид питомца
 public class BiologicalSpecies : Shared.Entity<BiologicalSpeciesId>
@@ -22,9 +24,7 @@ public class BiologicalSpecies : Shared.Entity<BiologicalSpeciesId>
     {
         _breeds.Add(breed);
     }
-    public static Result<BiologicalSpecies> Create(
-        BiologicalSpeciesId biologicalSpeciesId, 
-        string name)
+    public static Result<BiologicalSpecies> Create(BiologicalSpeciesId biologicalSpeciesId, string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Result.Failure<BiologicalSpecies>("Не указан вид питомца");

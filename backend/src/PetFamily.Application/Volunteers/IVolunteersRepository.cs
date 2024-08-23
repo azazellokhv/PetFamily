@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Domain.Models;
+using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Application.Volunteers;
 

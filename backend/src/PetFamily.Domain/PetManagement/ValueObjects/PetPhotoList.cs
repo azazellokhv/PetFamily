@@ -1,4 +1,4 @@
-﻿namespace PetFamily.Domain.Models;
+﻿namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 public record PetPhotoList
 {

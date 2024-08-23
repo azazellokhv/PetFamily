@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Domain.Models;
+using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.PetManagement.ValueObjects;
+using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Application.Volunteers.CreateVolunteer;
 
@@ -20,18 +22,18 @@ public class CreateVolunteerHandler
         var fullNameResult = FullName.Create(request.LastName, request.FirstName, request.Patronymic); 
         if (fullNameResult.IsFailure)
             return fullNameResult.Error;
-        
-        var descriptionResult = request.Description;
-        var workExperienceResult = request.WorkExperience;
-        var contactPhoneResult = request.ContactPhone;
+
+        var descriptionResult = Description.Create(request.Description);
+        var workExperienceResult = WorkExperience.Create(request.WorkExperience);
+        var contactPhoneResult = ContactPhone.Create(request.ContactPhone);
         var volunteerDetailsResult = new VolunteerDetails();
 
         var volunteerResult = Volunteer.Create(
             volunteerId, 
             fullNameResult.Value, 
-            descriptionResult,
-            workExperienceResult,
-            contactPhoneResult,
+            descriptionResult.Value,
+            workExperienceResult.Value,
+            contactPhoneResult.Value,
             volunteerDetailsResult);
         
         await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);

@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace PetFamily.Domain.Models;
+namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 //информация о здоровье питомца
 public record Health 
