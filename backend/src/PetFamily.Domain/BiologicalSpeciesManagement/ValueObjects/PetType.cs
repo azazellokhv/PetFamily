@@ -5,16 +5,16 @@ namespace PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 
 public record PetType
 {
-    private PetType(BiologicalSpeciesId biologicalSpeciesId, BreedId breedId)
+    private PetType(BiologicalSpeciesId biologicalSpeciesId, Guid breedId)
     {
         BiologicalSpeciesId = biologicalSpeciesId;
         BreedId = breedId;
     }
     
     public BiologicalSpeciesId BiologicalSpeciesId { get; }
-    public BreedId BreedId { get; }
+    public Guid BreedId { get; }
 
-    public static Result<PetType> Create(BiologicalSpeciesId biologicalSpeciesId, BreedId breedId)
+    public static Result<PetType> Create(BiologicalSpeciesId biologicalSpeciesId, Guid breedId)
     {
         var petType = new PetType(biologicalSpeciesId, breedId);
         

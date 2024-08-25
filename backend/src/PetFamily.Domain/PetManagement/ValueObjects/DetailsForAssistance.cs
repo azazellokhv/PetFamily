@@ -21,7 +21,7 @@ public record DetailsForAssistance
     public string Title { get; }
     public string Description { get; }
     public string ContactPhoneAssistance { get; }
-    public string BankCardAssistance { get; }
+    public string? BankCardAssistance { get; }
 
     public static Result<DetailsForAssistance> Create(
         string title,
@@ -31,6 +31,11 @@ public record DetailsForAssistance
     {
         if (contactPhoneAssistance?.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
             return Result.Failure<DetailsForAssistance>("Не верно указан контактный номер телефона");
+
+        if (string.IsNullOrWhiteSpace(contactPhoneAssistance))
+        {
+            return Result.Failure<DetailsForAssistance>("Не указан номер телефона");
+        }
 
         return new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
     }

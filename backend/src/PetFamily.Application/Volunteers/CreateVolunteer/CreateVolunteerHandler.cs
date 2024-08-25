@@ -26,8 +26,21 @@ public class CreateVolunteerHandler
         var descriptionResult = Description.Create(request.Description);
         var workExperienceResult = WorkExperience.Create(request.WorkExperience);
         var contactPhoneResult = ContactPhone.Create(request.ContactPhone);
-        var volunteerDetailsResult = new VolunteerDetails();
 
+        var socialNetworksResult = request.SocialNetworks
+            .Select(s => SocialNetwork.Create(s.Title, s.Link))
+            .ToList();
+
+        var detailsResult = request.DetailsForAssistance
+            .Select(d => DetailsForAssistance.Create(
+                d.Title, d.Description, d.ContactPhoneAssistance, d.BankCardAssistance))
+            .ToList();
+        
+        var volunteerDetailsResult = new VolunteerDetails(
+            socialNetworksResult.Select(
+                s => s.Value).ToList(),
+            detailsResult.Select(s => s.Value).ToList());
+       
         var volunteerResult = Volunteer.Create(
             volunteerId, 
             fullNameResult.Value, 

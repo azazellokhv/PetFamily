@@ -4,4 +4,4 @@ public record DetailsForAssistanceDTO(
     string Title, 
     string Description, 
     string ContactPhoneAssistance, 
-    string? BankCardAssistance);
+    string BankCardAssistance);

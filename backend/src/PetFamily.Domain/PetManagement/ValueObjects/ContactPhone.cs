@@ -12,7 +12,6 @@ public record ContactPhone
 
     public string Value { get; }
     
-
     public static Result<ContactPhone> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

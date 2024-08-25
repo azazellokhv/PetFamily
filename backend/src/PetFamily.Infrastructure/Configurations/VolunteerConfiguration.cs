@@ -33,17 +33,26 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                  .IsRequired()
                  .HasMaxLength(Constants.MAX_NAME_LENGTH);
             });
+
+        builder.ComplexProperty(v => v.Description, db =>
+        {
+            db.Property(d => d.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        });
         
-        builder.Property(v => v.Description)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        builder.ComplexProperty(v => v.WorkExperience, wb =>
+        {
+            wb.Property(d => d.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_WORK_EXPERIENCE);
+        });
 
-        builder.Property(v => v.WorkExperience)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_WORK_EXPERIENCE);
-
-        builder.Property(v => v.ContactPhone)
-            .IsRequired();
+        builder.ComplexProperty(v => v.ContactPhone, cb =>
+        {
+            cb.Property(x => x.Value)
+                .IsRequired();
+        });
 
         builder.OwnsOne(v => v.VolunteerDetails, vb =>
             {
