@@ -32,9 +32,6 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .IsRequired();
 
             pt.Property(b => b.BreedId)
-                .HasConversion(
-                    id => id.Value,
-                    value => BreedId.Create(value))
                 .IsRequired();
         });
         
