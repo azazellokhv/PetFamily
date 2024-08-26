@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Volunteers;
 using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.PetManagement.ValueObjects;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Infrastructure.Repositories;
@@ -23,7 +25,7 @@ public class VolunteersRepository : IVolunteersRepository
         return volunteer.Id.Value;
     }
 
-    public async Task<Result<Volunteer>> GetById(VolunteerId volunteerId, CancellationToken cancellationToken = default)
+    public async Task<Result<Volunteer, Error>> GetById(VolunteerId volunteerId, CancellationToken cancellationToken = default)
     {
         var volunteer = await _dbContext.Volunteers
             .Include(m => m.Pets)
@@ -31,10 +33,22 @@ public class VolunteersRepository : IVolunteersRepository
             .FirstOrDefaultAsync(v => v.Id == volunteerId, cancellationToken);
 
         if (volunteer is null)
-            return Result.Failure<Volunteer>("Volunteer not found");
+            return Errors.General.NotFound(volunteerId);
             
-        return Result.Success(volunteer);
-            
+        return volunteer;
     }
 
+    public async Task<Result<Volunteer, Error>> GetByContactPhone(ContactPhone contactPhone, CancellationToken cancellationToken = default)
+    {
+        var volunteer = await _dbContext.Volunteers
+            .Include(m => m.Pets)
+            .ThenInclude(p => p.PetPhotoList)
+            .FirstOrDefaultAsync(v => v.ContactPhone == contactPhone, cancellationToken);
+        
+        if (volunteer is null)
+            return Errors.General.NotFound();
+            
+        return volunteer;
+        
+    }
 }

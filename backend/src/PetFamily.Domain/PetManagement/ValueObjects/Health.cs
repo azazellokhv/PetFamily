@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
@@ -14,14 +15,12 @@ public record Health
     public bool IsHealthy { get; }
     public string DescriptionDisease { get; }
 
-    public static Result<Health> Create(bool isHealthy, string descriptionDisease)
+    public static Result<Health, Error> Create(bool isHealthy, string descriptionDisease)
     {
         if (isHealthy && string.IsNullOrWhiteSpace(descriptionDisease))
-            return Result.Failure<Health>("Если питомец болен, необходимо заполнить информацию о заболевании");
+            return Errors.General.ValueIsInvalid(nameof(Health));
 
-        var health = new Health(isHealthy, descriptionDisease);
-
-        return Result.Success(health);
+        return new Health(isHealthy, descriptionDisease);
     }
 
 }

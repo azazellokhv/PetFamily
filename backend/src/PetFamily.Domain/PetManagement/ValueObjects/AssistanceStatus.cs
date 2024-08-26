@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
@@ -12,14 +13,12 @@ public record AssistanceStatus
     
     public string Title { get; }
     
-    public static Result<AssistanceStatus> Create(string title)
+    public static Result<AssistanceStatus, Error> Create(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
-            return Result.Failure<AssistanceStatus>("Не указан статус помощи");
+            return Errors.General.ValueIsInvalid(nameof(AssistanceStatus));
 
-        var assistanceStatus = new AssistanceStatus(title);
-
-        return Result.Success(assistanceStatus);
+        return new AssistanceStatus(title);
     }
 
 }

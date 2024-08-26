@@ -16,15 +16,17 @@ public record FullName
     public string FirstName { get; }
     public string Patronymic { get; }
 
-    public static Result<FullName> Create(string lastName, string firstName, string patronymic)
+    public static Result<FullName, Error> Create(string lastName, string firstName, string? patronymic)
     {
-        if (lastName.Length > Constants.MAX_NAME_LENGTH ||
-            firstName.Length > Constants.MAX_NAME_LENGTH ||
-            patronymic.Length > Constants.MAX_NAME_LENGTH)
-            return Result.Failure<FullName>("Фамилия, имя или отчество превышают предельную длину");
+        if (string.IsNullOrWhiteSpace(lastName) || lastName.Length > Constants.MAX_NAME_LENGTH)
+            return Errors.General.ValueIsInvalid(nameof(lastName));
 
-        var fullName = new FullName(lastName, firstName, patronymic);
+        if (string.IsNullOrWhiteSpace(firstName) || firstName.Length > Constants.MAX_NAME_LENGTH)
+            return Errors.General.ValueIsInvalid(nameof(firstName));
 
-        return Result.Success(fullName);
+        if (string.IsNullOrWhiteSpace(patronymic) || patronymic.Length > Constants.MAX_NAME_LENGTH)
+            return Errors.General.ValueIsInvalid(nameof(patronymic));
+
+        return new FullName(lastName, firstName, patronymic);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
@@ -13,10 +14,10 @@ public record PetPhoto
     public string FileName { get;  }
     public bool IsMain { get;  }
     
-    public static Result<PetPhoto> Create(string fileName, bool isMain)
+    public static Result<PetPhoto, Error> Create(string fileName, bool isMain)
     {
         if (string.IsNullOrWhiteSpace(fileName))
-            return Result.Failure<PetPhoto>($"Путь к '{nameof(fileName)}' не может быть пустым");
+            return Errors.General.ValueIsInvalid(nameof(fileName));
         
         return new PetPhoto(fileName, isMain);
     }
