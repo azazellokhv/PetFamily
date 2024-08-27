@@ -18,11 +18,14 @@ public void Configure(EntityTypeBuilder<Pet> builder)
             .HasConversion(
                 id => id.Value,
                 value => PetId.Create(value));
-        
-        builder.Property(p => p.Nickname)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_NAME_LENGTH);
 
+        builder.ComplexProperty(p => p.Nickname, nb =>
+        {
+            nb.Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+        });
+        
         builder.ComplexProperty(p => p.PetType, pt =>
         {
             pt.Property(bs => bs.BiologicalSpeciesId)
@@ -35,13 +38,19 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .IsRequired();
         });
         
-        builder.Property(p => p.Description)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        builder.ComplexProperty(p => p.Description, db =>
+        {
+            db.Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        });
 
-        builder.Property(p => p.ColorPet)
-            .IsRequired()
-            .HasMaxLength(Constants.MAX_NAME_LENGTH);
+        builder.ComplexProperty(p => p.Color, cb =>
+        {
+            cb.Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+        });
         
         builder.ComplexProperty(p => p.Health, h =>
             {
@@ -81,14 +90,25 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                     .IsRequired();
             });
     
-        builder.Property(p => p.Weight)
-            .IsRequired();
-
-        builder.Property(p => p.Height)
-            .IsRequired();
+        builder.ComplexProperty(p => p.Weight, wb =>
+        {
+            wb.Property(x => x.Value)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_WEIGHT);
+        });
         
-        builder.Property(p => p.ContactPhone)
-            .IsRequired();
+        builder.ComplexProperty(p => p.Height, hb =>
+        {
+            hb.Property(x => x.Value)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_HEIGHT);
+        });
+
+        builder.ComplexProperty(p => p.PhoneNumber, cb =>
+        {
+            cb.Property(x => x.Value)
+                .IsRequired(); 
+        });
         
         builder.Property(p => p.IsNeutered)
             .IsRequired();

@@ -20,7 +20,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         FullName fullName,
         Description description,
         WorkExperience workExperience,
-        ContactPhone contactPhone,
+        PhoneNumber phoneNumber,
         VolunteerDetails? volunteerDetails)
         : base(volunteerId)
 
@@ -28,14 +28,14 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         FullName = fullName;
         Description = description;
         WorkExperience = workExperience;
-        ContactPhone = contactPhone;
+        PhoneNumber = phoneNumber;
         VolunteerDetails = volunteerDetails;
     }
 
     public FullName FullName { get; private set; }
     public Description Description { get; private set; }
     public WorkExperience WorkExperience { get; private set; }
-    public ContactPhone ContactPhone { get; private set; }
+    public PhoneNumber PhoneNumber { get; private set; }
     public VolunteerDetails? VolunteerDetails { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
@@ -59,7 +59,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         FullName fullName,
         Description description,
         WorkExperience workExperience,
-        ContactPhone contactPhone,
+        PhoneNumber phoneNumber,
         VolunteerDetails volunteerDetails)
     {
         return new Volunteer(
@@ -67,7 +67,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
             fullName,
             description,
             workExperience,
-            contactPhone,
+            phoneNumber,
             volunteerDetails);
     }
 

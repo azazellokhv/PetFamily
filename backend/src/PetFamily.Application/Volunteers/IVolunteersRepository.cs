@@ -10,5 +10,5 @@ public interface IVolunteersRepository
 {
     Task<Guid> Add(Volunteer volunteer, CancellationToken cancellationToken = default);
     Task<Result<Volunteer, Error>> GetById(VolunteerId volunteerId, CancellationToken cancellationToken = default);
-    Task<Result<Volunteer, Error>> GetByContactPhone(ContactPhone contactPhone, CancellationToken cancellationToken = default);
+    Task<Result<Volunteer, Error>> GetByContactPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken = default);
 }

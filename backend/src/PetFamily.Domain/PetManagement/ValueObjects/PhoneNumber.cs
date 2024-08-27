@@ -3,24 +3,24 @@ using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
-public record ContactPhone
+public record PhoneNumber
 {
-    private ContactPhone(string value)
+    private PhoneNumber(string value)
     {
         Value = value;
     }
 
     public string Value { get; }
     
-    public static Result<ContactPhone, Error> Create(string value)
+    public static Result<PhoneNumber, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Errors.General.ValueIsInvalid(nameof(ContactPhone));
+            return Errors.General.ValueIsInvalid(nameof(PhoneNumber));
 
         if (value.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(value))
-            return Errors.General.ValueIsInvalid(nameof(ContactPhone));
+            return Errors.General.ValueIsInvalid(nameof(PhoneNumber));
   
-        return new ContactPhone(value);   
+        return new PhoneNumber(value);   
     }
     
     private static bool IsDigitsOnly(string? checkString)

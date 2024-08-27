@@ -48,7 +48,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                 .HasMaxLength(Constants.MAX_WORK_EXPERIENCE);
         });
 
-        builder.ComplexProperty(v => v.ContactPhone, cb =>
+        builder.ComplexProperty(v => v.PhoneNumber, cb =>
         {
             cb.Property(x => x.Value)
                 .IsRequired();

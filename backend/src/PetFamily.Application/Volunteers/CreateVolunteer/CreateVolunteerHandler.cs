@@ -32,7 +32,7 @@ public class CreateVolunteerHandler
         if (workExperienceResult.IsFailure)
             return workExperienceResult.Error;
         
-        var contactPhoneResult = ContactPhone.Create(request.ContactPhone);
+        var contactPhoneResult = PhoneNumber.Create(request.ContactPhone);
         if (contactPhoneResult.IsFailure)
             return contactPhoneResult.Error;
         
