@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.ValueObjects;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Application.Volunteers.CreateVolunteer;
@@ -14,7 +15,7 @@ public class CreateVolunteerHandler
         _volunteersRepository = volunteersRepository;
     }
     
-    public async Task<Result<Guid, string>> Handle(
+    public async Task<Result<Guid, Error>> Handle(
         CreateVolunteerRequest request, CancellationToken cancellationToken = default)
     {
         var volunteerId = VolunteerId.NewVolunteerId();
@@ -24,23 +25,49 @@ public class CreateVolunteerHandler
             return fullNameResult.Error;
 
         var descriptionResult = Description.Create(request.Description);
-        var workExperienceResult = WorkExperience.Create(request.WorkExperience);
-        var contactPhoneResult = ContactPhone.Create(request.ContactPhone);
-
-        var socialNetworksResult = request.SocialNetworks
-            .Select(s => SocialNetwork.Create(s.Title, s.Link))
-            .ToList();
-
-        var detailsResult = request.DetailsForAssistance
-            .Select(d => DetailsForAssistance.Create(
-                d.Title, d.Description, d.ContactPhoneAssistance, d.BankCardAssistance))
-            .ToList();
+        if (descriptionResult.IsFailure)
+            return descriptionResult.Error;
         
-        var volunteerDetailsResult = new VolunteerDetails(
-            socialNetworksResult.Select(
-                s => s.Value).ToList(),
-            detailsResult.Select(s => s.Value).ToList());
-       
+        var workExperienceResult = WorkExperience.Create(request.WorkExperience);
+        if (workExperienceResult.IsFailure)
+            return workExperienceResult.Error;
+        
+        var contactPhoneResult = ContactPhone.Create(request.ContactPhone);
+        if (contactPhoneResult.IsFailure)
+            return contactPhoneResult.Error;
+        
+        var socialNetworksResult = new List<SocialNetwork>();
+        foreach (var socialNetwork in request.SocialNetworks)
+        {
+            var socialNetworkResult = SocialNetwork.Create(
+                socialNetwork.Title, socialNetwork.Link);
+
+            if (socialNetworkResult.IsFailure)
+                return socialNetworkResult.Error;
+
+            socialNetworksResult.Add(socialNetworkResult.Value);
+        }
+
+        var detailsResult = new List<DetailsForAssistance>();
+        foreach (var detail in request.DetailsForAssistance)
+        {
+            var detailResult = DetailsForAssistance.Create(
+                detail.Title, detail.Description, detail.ContactPhoneAssistance, detail.BankCardAssistance);
+
+            if (detailResult.IsFailure)
+                return detailResult.Error;
+
+            detailsResult.Add(detailResult.Value);
+        }
+        
+        var volunteer = await _volunteersRepository
+            .GetByContactPhone(contactPhoneResult.Value, cancellationToken);
+
+        if (volunteer.IsSuccess)
+            return Errors.Volunteer.AlreadyExist();
+        
+        var volunteerDetailsResult = new VolunteerDetails(socialNetworksResult, detailsResult);
+     
         var volunteerResult = Volunteer.Create(
             volunteerId, 
             fullNameResult.Value, 
@@ -48,10 +75,12 @@ public class CreateVolunteerHandler
             workExperienceResult.Value,
             contactPhoneResult.Value,
             volunteerDetailsResult);
+        if (volunteerResult.IsFailure)
+            return volunteerResult.Error;
         
         await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);
 
-        return volunteerId.Value;
+        return (Guid)volunteerResult.Value.Id;
     }
 
 }

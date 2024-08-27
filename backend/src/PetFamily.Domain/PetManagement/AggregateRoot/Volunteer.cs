@@ -39,7 +39,14 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public VolunteerDetails? VolunteerDetails { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
-    public void AddPat(Pet pet) => _pets.Add(pet);
+    public UnitResult<Error> AddPat(Pet pet)
+    {
+        _pets.Add(pet);
+        
+        return Result.Success<Error>();
+    }
+
+
     public int CountPetsFindHome() =>
         _pets.Count(p => p.AssistanceStatus.Title == "");
     public int CountPetsNeedHome() =>
@@ -47,7 +54,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public int CountPetsTreated =>
         _pets.Count(p => p.AssistanceStatus.Title == "");
 
-    public static Result<Volunteer> Create(
+    public static Result<Volunteer, Error> Create(
         VolunteerId volunteerId,
         FullName fullName,
         Description description,

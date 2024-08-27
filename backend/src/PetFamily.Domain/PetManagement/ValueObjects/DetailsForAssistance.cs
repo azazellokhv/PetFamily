@@ -23,20 +23,18 @@ public record DetailsForAssistance
     public string ContactPhoneAssistance { get; }
     public string? BankCardAssistance { get; }
 
-    public static Result<DetailsForAssistance> Create(
+    public static Result<DetailsForAssistance, Error> Create(
         string title,
         string description,
         string contactPhoneAssistance,
         string bankCardAssistance)
     {
-        if (contactPhoneAssistance?.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
-            return Result.Failure<DetailsForAssistance>("Не верно указан контактный номер телефона");
+        if (contactPhoneAssistance.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
+            return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));
 
         if (string.IsNullOrWhiteSpace(contactPhoneAssistance))
-        {
-            return Result.Failure<DetailsForAssistance>("Не указан номер телефона");
-        }
-
+            return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));
+ 
         return new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
     }
 

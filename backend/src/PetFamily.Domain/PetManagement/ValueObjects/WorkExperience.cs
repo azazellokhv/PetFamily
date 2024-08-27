@@ -12,15 +12,12 @@ public record WorkExperience
 
     public int Value { get; }
 
-    public static Result<WorkExperience> Create(int value)
+    public static Result<WorkExperience, Error> Create(int value)
     {
-        if (value < Constants.MIN_WORK_EXPERIENCE ||
-            value > Constants.MAX_WORK_EXPERIENCE)
-            return Result.Failure<WorkExperience>("Не верно указан опыт работы");
-        
-        var workExperience = new WorkExperience(value);
-        
-        return Result.Success(workExperience);   
+        if (value < Constants.MIN_WORK_EXPERIENCE || value > Constants.MAX_WORK_EXPERIENCE)
+            return Errors.General.ValueIsInvalid(nameof(WorkExperience));
+   
+        return new WorkExperience(value);   
         
     }
 }

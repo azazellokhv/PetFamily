@@ -12,17 +12,15 @@ public record ContactPhone
 
     public string Value { get; }
     
-    public static Result<ContactPhone> Create(string value)
+    public static Result<ContactPhone, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Result.Failure<ContactPhone>("Заполните номер телефона");
+            return Errors.General.ValueIsInvalid(nameof(ContactPhone));
 
         if (value.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(value))
-            return Result.Failure<ContactPhone>("Не верно указан контактный номер телефона");
-        
-        var contactPhone = new ContactPhone(value);
-        
-        return Result.Success(contactPhone);   
+            return Errors.General.ValueIsInvalid(nameof(ContactPhone));
+  
+        return new ContactPhone(value);   
     }
     
     private static bool IsDigitsOnly(string? checkString)
