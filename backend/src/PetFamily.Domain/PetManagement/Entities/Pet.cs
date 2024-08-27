@@ -19,12 +19,12 @@ public class Pet : Shared.Entity<PetId>
         Nickname nickname,
         PetType petType,
         Description description,
-        ColorPet colorPet,
+        Color color,
         Health health,
         Address address,
         Weight weight,
         Height height,
-        ContactPhone contactPhone,
+        PhoneNumber phoneNumber,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
@@ -36,12 +36,12 @@ public class Pet : Shared.Entity<PetId>
         Nickname = nickname;
         PetType = petType;
         Description = description;
-        ColorPet = colorPet;
+        Color = color;
         Health = health;
         Address = address;
         Weight = weight;
         Height = height;
-        ContactPhone = contactPhone;
+        PhoneNumber = phoneNumber;
         IsNeutered = isNeutered;
         Birthday = birthday;
         IsVaccinated = isVaccinated;
@@ -54,12 +54,12 @@ public class Pet : Shared.Entity<PetId>
     public Nickname Nickname { get; private set; }
     public PetType PetType { get; private set; }
     public Description Description { get; private set; }
-    public ColorPet ColorPet { get; private set; }
+    public Color Color { get; private set; }
     public Health Health { get; private set; }
     public Address Address { get; private set; }
     public Weight Weight { get; private set; }
     public Height Height { get; private set; }
-    public ContactPhone ContactPhone { get; private set; }
+    public PhoneNumber PhoneNumber { get; private set; }
     public bool IsNeutered { get; private set; }
     public DateOnly Birthday { get; private set; }
     public bool IsVaccinated { get; private set; }
@@ -74,12 +74,12 @@ public class Pet : Shared.Entity<PetId>
         PetType petType,
         Description description,
         Breed breed,
-        ColorPet colorPet,
+        Color color,
         Health health,
         Address address,
         Weight weight,
         Height height,
-        ContactPhone contactPhone,
+        PhoneNumber phoneNumber,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
@@ -92,12 +92,12 @@ public class Pet : Shared.Entity<PetId>
             nickname,
             petType,
             description,
-            colorPet,
+            color,
             health,
             address,
             weight,
             height,
-            contactPhone,
+            phoneNumber,
             isNeutered,
             birthday,
             isVaccinated,

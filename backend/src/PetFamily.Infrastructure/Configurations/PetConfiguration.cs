@@ -45,7 +45,7 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
         });
 
-        builder.ComplexProperty(p => p.ColorPet, cb =>
+        builder.ComplexProperty(p => p.Color, cb =>
         {
             cb.Property(x => x.Value)
                 .IsRequired()
@@ -104,7 +104,7 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .HasMaxLength(Constants.MAX_HEIGHT);
         });
 
-        builder.ComplexProperty(p => p.ContactPhone, cb =>
+        builder.ComplexProperty(p => p.PhoneNumber, cb =>
         {
             cb.Property(x => x.Value)
                 .IsRequired(); 

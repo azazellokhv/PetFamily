@@ -38,12 +38,12 @@ public class VolunteersRepository : IVolunteersRepository
         return volunteer;
     }
 
-    public async Task<Result<Volunteer, Error>> GetByContactPhone(ContactPhone contactPhone, CancellationToken cancellationToken = default)
+    public async Task<Result<Volunteer, Error>> GetByContactPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken = default)
     {
         var volunteer = await _dbContext.Volunteers
             .Include(m => m.Pets)
             .ThenInclude(p => p.PetPhotoList)
-            .FirstOrDefaultAsync(v => v.ContactPhone == contactPhone, cancellationToken);
+            .FirstOrDefaultAsync(v => v.PhoneNumber == phoneNumber, cancellationToken);
         
         if (volunteer is null)
             return Errors.General.NotFound();
