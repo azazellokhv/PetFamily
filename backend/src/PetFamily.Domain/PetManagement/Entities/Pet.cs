@@ -16,15 +16,15 @@ public class Pet : Shared.Entity<PetId>
 
     private Pet(
         PetId petId,
-        string nickname,
+        Nickname nickname,
         PetType petType,
-        string description,
-        string colorPet,
+        Description description,
+        ColorPet colorPet,
         Health health,
         Address address,
-        int weight,
-        int height,
-        string contactPhone,
+        Weight weight,
+        Height height,
+        ContactPhone contactPhone,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
@@ -51,15 +51,15 @@ public class Pet : Shared.Entity<PetId>
         PetPhotoList = petPhotoList;
     }
 
-    public string Nickname { get; private set; }
+    public Nickname Nickname { get; private set; }
     public PetType PetType { get; private set; }
-    public string Description { get; private set; } = default!;
-    public string ColorPet { get; private set; } = default!;
-    public Health Health { get; private set; } = default!;
+    public Description Description { get; private set; }
+    public ColorPet ColorPet { get; private set; }
+    public Health Health { get; private set; }
     public Address Address { get; private set; }
-    public int Weight { get; private set; }
-    public int Height { get; private set; }
-    public string ContactPhone { get; private set; }
+    public Weight Weight { get; private set; }
+    public Height Height { get; private set; }
+    public ContactPhone ContactPhone { get; private set; }
     public bool IsNeutered { get; private set; }
     public DateOnly Birthday { get; private set; }
     public bool IsVaccinated { get; private set; }
@@ -70,16 +70,16 @@ public class Pet : Shared.Entity<PetId>
 
     public static Result<Pet> Create(
         PetId petId,
-        string nickname,
+        Nickname nickname,
         PetType petType,
-        string description,
+        Description description,
         Breed breed,
-        string colorPet,
+        ColorPet colorPet,
         Health health,
         Address address,
-        int weight,
-        int height,
-        string contactPhone,
+        Weight weight,
+        Height height,
+        ContactPhone contactPhone,
         bool isNeutered,
         DateOnly birthday,
         bool isVaccinated,
@@ -87,12 +87,6 @@ public class Pet : Shared.Entity<PetId>
         DetailsForAssistance detailsForAssistance,
         PetPhotoList petPhotoList)
     {
-        if (string.IsNullOrWhiteSpace(nickname) || nickname.Length > Constants.MAX_NAME_LENGTH)
-            return Result.Failure<Pet>("Не указана кличка питомца");
-
-        if (contactPhone.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhone))
-            return Result.Failure<Pet>("Не верно указан контактный номер телефона");
-
         return new Pet(
             petId,
             nickname,
@@ -110,13 +104,5 @@ public class Pet : Shared.Entity<PetId>
             assistanceStatus,
             detailsForAssistance,
             petPhotoList);
-    }
-
-    private static bool IsDigitsOnly(string? checkString)
-    {
-        if (checkString == null)
-            return false;
-
-        return checkString.All(c => c >= '0' && c <= '9');
     }
 }
