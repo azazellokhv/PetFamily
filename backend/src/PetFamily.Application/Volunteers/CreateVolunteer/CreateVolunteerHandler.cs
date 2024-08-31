@@ -20,60 +20,47 @@ public class CreateVolunteerHandler
     {
         var volunteerId = VolunteerId.NewVolunteerId();
         
-        var fullNameResult = FullName.Create(request.LastName, request.FirstName, request.Patronymic); 
-        if (fullNameResult.IsFailure)
-            return fullNameResult.Error;
+        var fullName = FullName.Create(
+            request.LastName, request.FirstName, request.Patronymic).Value; 
 
-        var descriptionResult = Description.Create(request.Description);
-        if (descriptionResult.IsFailure)
-            return descriptionResult.Error;
+        var description = Description.Create(request.Description).Value;
         
-        var workExperienceResult = WorkExperience.Create(request.WorkExperience);
-        if (workExperienceResult.IsFailure)
-            return workExperienceResult.Error;
+        var workExperience = WorkExperience.Create(request.WorkExperience).Value;
         
-        var contactPhoneResult = PhoneNumber.Create(request.ContactPhone);
-        if (contactPhoneResult.IsFailure)
-            return contactPhoneResult.Error;
+        var contactPhone = PhoneNumber.Create(request.PhoneNumber).Value;
         
-        var socialNetworksResult = new List<SocialNetwork>();
+        var socialNetworks = new List<SocialNetwork>();
         foreach (var socialNetwork in request.SocialNetworks)
         {
             var socialNetworkResult = SocialNetwork.Create(
-                socialNetwork.Title, socialNetwork.Link);
+                socialNetwork.Title, socialNetwork.Link).Value;
 
-            if (socialNetworkResult.IsFailure)
-                return socialNetworkResult.Error;
-
-            socialNetworksResult.Add(socialNetworkResult.Value);
+            socialNetworks.Add(socialNetworkResult);
         }
 
-        var detailsResult = new List<DetailsForAssistance>();
+        var details = new List<DetailsForAssistance>();
         foreach (var detail in request.DetailsForAssistance)
         {
             var detailResult = DetailsForAssistance.Create(
-                detail.Title, detail.Description, detail.ContactPhoneAssistance, detail.BankCardAssistance);
+                detail.Title, detail.Description, detail.ContactPhoneAssistance, detail.BankCardAssistance).Value;
 
-            if (detailResult.IsFailure)
-                return detailResult.Error;
-
-            detailsResult.Add(detailResult.Value);
+            details.Add(detailResult);
         }
         
         var volunteer = await _volunteersRepository
-            .GetByContactPhone(contactPhoneResult.Value, cancellationToken);
+            .GetByContactPhone(contactPhone, cancellationToken);
 
         if (volunteer.IsSuccess)
             return Errors.Volunteer.AlreadyExist();
         
-        var volunteerDetailsResult = new VolunteerDetails(socialNetworksResult, detailsResult);
+        var volunteerDetailsResult = new VolunteerDetails(socialNetworks, details);
      
         var volunteerResult = Volunteer.Create(
             volunteerId, 
-            fullNameResult.Value, 
-            descriptionResult.Value,
-            workExperienceResult.Value,
-            contactPhoneResult.Value,
+            fullName, 
+            description,
+            workExperience,
+            contactPhone,
             volunteerDetailsResult);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error;

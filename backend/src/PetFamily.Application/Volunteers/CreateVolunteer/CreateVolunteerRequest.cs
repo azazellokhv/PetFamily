@@ -8,6 +8,6 @@ public record CreateVolunteerRequest(
     string Patronymic,
     string Description, 
     int WorkExperience,
-    string ContactPhone,
+    string PhoneNumber,
     IEnumerable<DetailsForAssistanceDTO> DetailsForAssistance,
     IEnumerable<SocialNetworksDTO> SocialNetworks);
