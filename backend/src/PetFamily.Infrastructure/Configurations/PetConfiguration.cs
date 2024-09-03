@@ -154,6 +154,10 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                     .IsRequired();
             });
         });
+        
+        builder.Property<bool>("_isDeleted")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnName("is_deleted");
 
     }
 }
