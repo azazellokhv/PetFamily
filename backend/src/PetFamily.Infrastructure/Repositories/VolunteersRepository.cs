@@ -24,6 +24,22 @@ public class VolunteersRepository : IVolunteersRepository
         
         return volunteer.Id.Value;
     }
+    
+    public async Task<Guid> Save(Volunteer volunteer, CancellationToken cancellationToken = default)
+    {
+        _dbContext.Volunteers.Attach(volunteer);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        return volunteer.Id.Value;
+    }
+    
+    public async Task<Guid> Delete(Volunteer volunteer, CancellationToken cancellationToken = default)
+    {
+        _dbContext.Volunteers.Remove(volunteer);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        return volunteer.Id.Value;
+    }
 
     public async Task<Result<Volunteer, Error>> GetById(VolunteerId volunteerId, CancellationToken cancellationToken = default)
     {

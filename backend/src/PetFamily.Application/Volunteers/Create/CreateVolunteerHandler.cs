@@ -1,18 +1,23 @@
 ﻿using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Logging;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Ids;
 
-namespace PetFamily.Application.Volunteers.CreateVolunteer;
+namespace PetFamily.Application.Volunteers.Create;
 
 public class CreateVolunteerHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly ILogger<CreateVolunteerHandler> _logger;
 
-    public CreateVolunteerHandler(IVolunteersRepository volunteersRepository)
+    public CreateVolunteerHandler(
+        IVolunteersRepository volunteersRepository,
+        ILogger<CreateVolunteerHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _logger = logger;
     }
     
     public async Task<Result<Guid, Error>> Handle(
@@ -68,6 +73,10 @@ public class CreateVolunteerHandler
             return volunteerResult.Error;
         
         await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);
+        
+        _logger.LogInformation(
+            "Create volunteer {fullName.LastName} {fullName.FirstName} {fullName.Patronymic} with id {volunteerId}",
+            fullName.LastName, fullName.FirstName, fullName.Patronymic, volunteerId);
 
         return (Guid)volunteerResult.Value.Id;
     }

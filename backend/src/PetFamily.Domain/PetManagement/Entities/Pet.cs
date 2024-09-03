@@ -7,13 +7,14 @@ using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Domain.PetManagement.Entities;
 
-public class Pet : Shared.Entity<PetId>
+public class Pet : Shared.Entity<PetId>, ISoftDeletable
 {
     //For EF Сore
     private Pet(PetId id) : base(id)
     {
     }
 
+    private bool _isDeleted = false;
     private Pet(
         PetId petId,
         Nickname nickname,
@@ -104,5 +105,17 @@ public class Pet : Shared.Entity<PetId>
             assistanceStatus,
             detailsForAssistance,
             petPhotoList);
+    }
+
+    public void Delete()
+    {
+        if (_isDeleted == false)
+            _isDeleted = true;
+    }
+
+    public void Restore()
+    {
+        if (_isDeleted == true)
+            _isDeleted = false;
     }
 }

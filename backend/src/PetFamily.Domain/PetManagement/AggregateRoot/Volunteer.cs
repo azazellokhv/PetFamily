@@ -6,9 +6,10 @@ using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
-public sealed class Volunteer : Shared.Entity<VolunteerId>
+public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 {
-    private readonly List<Pet> _pets = default!;
+    private bool _isDeleted = false;
+    private readonly List<Pet> _pets;
 
     //For EF Сore
     private Volunteer(VolunteerId id) : base(id)
@@ -39,18 +40,44 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public VolunteerDetails? VolunteerDetails { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
+
     public UnitResult<Error> AddPat(Pet pet)
     {
         _pets.Add(pet);
-        
+
         return Result.Success<Error>();
     }
 
+    public void UpdateMainInfo(
+        FullName fullName,
+        Description description,
+        WorkExperience workExperience,
+        PhoneNumber phoneNumber)
+    {
+        FullName = fullName;
+        Description = description;
+        WorkExperience = workExperience;
+        PhoneNumber = phoneNumber;
+    }
+
+    public void Delete()
+    {
+        if (_isDeleted == false)
+            _isDeleted = true;
+    }
+
+    public void Restore()
+    {
+        if (_isDeleted == true)
+            _isDeleted = false;
+    }
 
     public int CountPetsFindHome() =>
         _pets.Count(p => p.AssistanceStatus.Title == "");
+
     public int CountPetsNeedHome() =>
         _pets.Count(p => p.AssistanceStatus.Title == "");
+
     public int CountPetsTreated =>
         _pets.Count(p => p.AssistanceStatus.Title == "");
 
@@ -70,6 +97,4 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
             phoneNumber,
             volunteerDetails);
     }
-
-    
 }
