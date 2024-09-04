@@ -36,31 +36,20 @@ public class CreateVolunteerHandler
         
         var contactPhone = PhoneNumber.Create(request.PhoneNumber).Value;
         
-        var socialNetworks = new List<SocialNetwork>();
-        foreach (var socialNetwork in request.SocialNetworks)
-        {
-            var socialNetworkResult = SocialNetwork.Create(
-                socialNetwork.Title, socialNetwork.Link).Value;
+        var socialNetworks = request.SocialNetworks
+            .Select(s => SocialNetwork.Create(s.Title, s.Link).Value);
+        var socialNetworksList = new SocialNetworksList(socialNetworks);
 
-            socialNetworks.Add(socialNetworkResult);
-        }
+        var detailsForAssistance = request.DetailsForAssistance
+            .Select(d => DetailForAssistance.Create(
+            d.Title, d.Description, d.ContactPhoneAssistance, d.BankCardAssistance).Value);
+        var volunteerDetailsList = new VolunteerDetailsList(detailsForAssistance);
 
-        var details = new List<DetailsForAssistance>();
-        foreach (var detail in request.DetailsForAssistance)
-        {
-            var detailResult = DetailsForAssistance.Create(
-                detail.Title, detail.Description, detail.ContactPhoneAssistance, detail.BankCardAssistance).Value;
-
-            details.Add(detailResult);
-        }
-        
         var volunteer = await _volunteersRepository
             .GetByContactPhone(contactPhone, cancellationToken);
 
         if (volunteer.IsSuccess)
             return Errors.Volunteer.AlreadyExist();
-        
-        var volunteerDetailsResult = new VolunteerDetails(socialNetworks, details);
      
         var volunteerResult = Volunteer.Create(
             volunteerId, 
@@ -68,7 +57,8 @@ public class CreateVolunteerHandler
             description,
             workExperience,
             contactPhone,
-            volunteerDetailsResult);
+            socialNetworksList,
+            volunteerDetailsList);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error;
         
@@ -80,5 +70,4 @@ public class CreateVolunteerHandler
 
         return (Guid)volunteerResult.Value.Id;
     }
-
 }

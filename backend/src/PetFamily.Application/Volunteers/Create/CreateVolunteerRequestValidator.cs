@@ -29,7 +29,7 @@ public class CreateVolunteerRequestValidator : AbstractValidator<CreateVolunteer
                 {
                     x.Title, x.Description, x.ContactPhoneAssistance, x.BankCardAssistance
                 })
-                .MustBeValueObject(y => DetailsForAssistance.Create(
+                .MustBeValueObject(y => DetailForAssistance.Create(
                     y.Title, y.Description, y.ContactPhoneAssistance, y.BankCardAssistance));
         });
     }

@@ -4,9 +4,9 @@ using PetFamily.Domain.Shared;
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 //информация об оказании помощи
-public record DetailsForAssistance
+public record DetailForAssistance
 {
-    private DetailsForAssistance(
+    private DetailForAssistance(
         string title,
         string description,
         string contactPhoneAssistance,
@@ -23,7 +23,7 @@ public record DetailsForAssistance
     public string ContactPhoneAssistance { get; }
     public string? BankCardAssistance { get; }
 
-    public static Result<DetailsForAssistance, Error> Create(
+    public static Result<DetailForAssistance, Error> Create(
         string title,
         string description,
         string contactPhoneAssistance,
@@ -35,7 +35,7 @@ public record DetailsForAssistance
         if (string.IsNullOrWhiteSpace(contactPhoneAssistance))
             return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));
  
-        return new DetailsForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
+        return new DetailForAssistance(title, description, contactPhoneAssistance, bankCardAssistance);
     }
 
     private static bool IsDigitsOnly(string? checkString)

@@ -30,7 +30,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         DateOnly birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
-        DetailsForAssistance detailsForAssistance,
+        DetailForAssistance detailForAssistance,
         PetPhotoList petPhotoList)
         : base(petId)
     {
@@ -47,7 +47,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         Birthday = birthday;
         IsVaccinated = isVaccinated;
         AssistanceStatus = assistanceStatus;
-        DetailsForAssistance = detailsForAssistance;
+        DetailForAssistance = detailForAssistance;
         DateOfCreation = DateTime.UtcNow;
         PetPhotoList = petPhotoList;
     }
@@ -65,7 +65,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
     public DateOnly Birthday { get; private set; }
     public bool IsVaccinated { get; private set; }
     public AssistanceStatus AssistanceStatus { get; private set; }
-    public DetailsForAssistance DetailsForAssistance { get; private set; }
+    public DetailForAssistance DetailForAssistance { get; private set; }
     public DateTime DateOfCreation { get; private set; }
     public PetPhotoList? PetPhotoList { get; private set; }
 
@@ -85,7 +85,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         DateOnly birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
-        DetailsForAssistance detailsForAssistance,
+        DetailForAssistance detailForAssistance,
         PetPhotoList petPhotoList)
     {
         return new Pet(
@@ -103,7 +103,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
             birthday,
             isVaccinated,
             assistanceStatus,
-            detailsForAssistance,
+            detailForAssistance,
             petPhotoList);
     }
 
