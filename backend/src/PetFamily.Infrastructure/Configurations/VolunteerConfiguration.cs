@@ -56,7 +56,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
 
         builder.OwnsOne(v => v.SocialNetworkList, vb =>
             {
-                vb.ToJson();
+                vb.ToJson("social_network");
 
                 vb.OwnsMany(x => x.SocialNetworks, sb =>
                 {
@@ -70,7 +70,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
         
         builder.OwnsOne(v => v.VolunteerDetailsList, vb =>
         {
-            vb.ToJson();
+            vb.ToJson("details");
 
             vb.OwnsMany(x => x.DetailsForAssistance, db =>
             {

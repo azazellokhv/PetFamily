@@ -22,8 +22,8 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
         Description description,
         WorkExperience workExperience,
         PhoneNumber phoneNumber,
-        SocialNetworksList? socialNetworkList,
-        VolunteerDetailsList? volunteerDetailsList)
+        SocialNetworksList socialNetworkList,
+        VolunteerDetailsList volunteerDetailsList)
         : base(volunteerId)
 
     {
