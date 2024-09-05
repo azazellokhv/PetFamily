@@ -54,9 +54,9 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                 .IsRequired();
         });
 
-        builder.OwnsOne(v => v.VolunteerDetails, vb =>
+        builder.OwnsOne(v => v.SocialNetworkList, vb =>
             {
-                vb.ToJson();
+                vb.ToJson("social_network");
 
                 vb.OwnsMany(x => x.SocialNetworks, sb =>
                 {
@@ -66,25 +66,30 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                     sb.Property(sn => sn.Link)
                         .IsRequired();
                 });
-
-                vb.OwnsMany(x => x.DetailsForAssistance, db =>
-                {
-                    db.Property(da => da.Title)
-                        .IsRequired()
-                        .HasMaxLength(Constants.MAX_NAME_LENGTH);
-                    
-                    db.Property(da => da.Description)
-                        .IsRequired(false)
-                        .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
-
-                    db.Property(da => da.ContactPhoneAssistance)
-                        .IsRequired();
-                    
-                    db.Property(da => da.BankCardAssistance)
-                        .IsRequired(false);
-
-                });
             });
+        
+        builder.OwnsOne(v => v.VolunteerDetailsList, vb =>
+        {
+            vb.ToJson("details");
+
+            vb.OwnsMany(x => x.DetailsForAssistance, db =>
+            {
+                db.Property(da => da.Title)
+                    .IsRequired()
+                    .HasMaxLength(Constants.MAX_NAME_LENGTH);
+                    
+                db.Property(da => da.Description)
+                    .IsRequired(false)
+                    .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+
+                db.Property(da => da.ContactPhoneAssistance)
+                    .IsRequired();
+                    
+                db.Property(da => da.BankCardAssistance)
+                    .IsRequired(false);
+
+            });
+        });
  
         builder.HasMany(v => v.Pets)
             .WithOne()

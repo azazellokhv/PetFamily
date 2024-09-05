@@ -22,7 +22,8 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
         Description description,
         WorkExperience workExperience,
         PhoneNumber phoneNumber,
-        VolunteerDetails? volunteerDetails)
+        SocialNetworksList socialNetworkList,
+        VolunteerDetailsList volunteerDetailsList)
         : base(volunteerId)
 
     {
@@ -30,14 +31,16 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
         Description = description;
         WorkExperience = workExperience;
         PhoneNumber = phoneNumber;
-        VolunteerDetails = volunteerDetails;
+        SocialNetworkList = socialNetworkList;
+        VolunteerDetailsList = volunteerDetailsList;
     }
 
     public FullName FullName { get; private set; }
     public Description Description { get; private set; }
     public WorkExperience WorkExperience { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
-    public VolunteerDetails? VolunteerDetails { get; private set; }
+    public SocialNetworksList SocialNetworkList { get; private set; }
+    public VolunteerDetailsList VolunteerDetailsList { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
 
@@ -87,7 +90,8 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
         Description description,
         WorkExperience workExperience,
         PhoneNumber phoneNumber,
-        VolunteerDetails volunteerDetails)
+        SocialNetworksList socialNetworkList,
+        VolunteerDetailsList volunteerDetailsList)
     {
         return new Volunteer(
             volunteerId,
@@ -95,6 +99,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
             description,
             workExperience,
             phoneNumber,
-            volunteerDetails);
+            socialNetworkList,
+            volunteerDetailsList);
     }
 }

@@ -120,7 +120,7 @@ public void Configure(EntityTypeBuilder<Pet> builder)
             .IsRequired();
       
         
-        builder.ComplexProperty(p => p.DetailsForAssistance, d =>
+        builder.ComplexProperty(p => p.DetailForAssistance, d =>
         {
             d.Property(da => da.Title)
                 .IsRequired()
