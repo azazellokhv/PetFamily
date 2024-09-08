@@ -1,6 +1,6 @@
 ﻿namespace PetFamily.Application.DTOs;
 
-public record DetailsForAssistanceDTO(
+public record DetailsForAssistanceDto(
     string Title, 
     string Description, 
     string ContactPhoneAssistance, 

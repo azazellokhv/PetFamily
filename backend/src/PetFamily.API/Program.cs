@@ -1,5 +1,4 @@
 using PetFamily.API;
-using PetFamily.API.Extensions;
 using PetFamily.API.Middlewares;
 using PetFamily.Application;
 using PetFamily.Infrastructure;
