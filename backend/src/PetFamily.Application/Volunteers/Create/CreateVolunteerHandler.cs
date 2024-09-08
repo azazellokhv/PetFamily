@@ -65,8 +65,7 @@ public class CreateVolunteerHandler
         await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);
         
         _logger.LogInformation(
-            "Create volunteer {fullName.LastName} {fullName.FirstName} {fullName.Patronymic} with id {volunteerId}",
-            fullName.LastName, fullName.FirstName, fullName.Patronymic, volunteerId);
+            "Create volunteer with id {volunteerId}", volunteerId);
 
         return (Guid)volunteerResult.Value.Id;
     }
