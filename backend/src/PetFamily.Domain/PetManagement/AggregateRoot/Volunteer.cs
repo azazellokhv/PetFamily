@@ -2,6 +2,7 @@
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
@@ -9,7 +10,7 @@ namespace PetFamily.Domain.PetManagement.AggregateRoot;
 public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 {
     private bool _isDeleted = false;
-    private readonly List<Pet> _pets;
+    private readonly List<Pet> _pets =[];
 
     //For EF Сore
     private Volunteer(VolunteerId id) : base(id)
@@ -44,7 +45,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
     public IReadOnlyList<Pet> Pets => _pets;
 
 
-    public UnitResult<Error> AddPat(Pet pet)
+    public UnitResult<Error> AddPet(Pet pet)
     {
         _pets.Add(pet);
 
@@ -75,14 +76,14 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
             _isDeleted = false;
     }
 
-    public int CountPetsFindHome() =>
-        _pets.Count(p => p.AssistanceStatus.Title == "");
+    public int CountPetsNeedHelp() =>
+        _pets.Count(p => p.AssistanceStatus == AssistanceStatus.NeedHelp);
 
-    public int CountPetsNeedHome() =>
-        _pets.Count(p => p.AssistanceStatus.Title == "");
+    public int CountPetsFindHome() =>
+        _pets.Count(p => p.AssistanceStatus == AssistanceStatus.FindHome);
 
     public int CountPetsTreated =>
-        _pets.Count(p => p.AssistanceStatus.Title == "");
+        _pets.Count(p => p.AssistanceStatus == AssistanceStatus.FoundHome);
 
     public static Result<Volunteer, Error> Create(
         VolunteerId volunteerId,

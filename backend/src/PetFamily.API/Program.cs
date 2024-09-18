@@ -22,7 +22,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services
     .AddApi()
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddApplication();
 
 var app = builder.Build();

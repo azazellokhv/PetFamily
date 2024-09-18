@@ -3,6 +3,7 @@ using PetFamily.Domain.BiologicalSpeciesManagement.Entities;
 using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Domain.PetManagement.Entities;
@@ -27,7 +28,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         Height height,
         PhoneNumber phoneNumber,
         bool isNeutered,
-        DateOnly birthday,
+        DateTime birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,
@@ -62,7 +63,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
     public Height Height { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
     public bool IsNeutered { get; private set; }
-    public DateOnly Birthday { get; private set; }
+    public DateTime Birthday { get; private set; }
     public bool IsVaccinated { get; private set; }
     public AssistanceStatus AssistanceStatus { get; private set; }
     public DetailForAssistance DetailForAssistance { get; private set; }
@@ -74,7 +75,6 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         Nickname nickname,
         PetType petType,
         Description description,
-        Breed breed,
         Color color,
         Health health,
         Address address,
@@ -82,7 +82,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         Height height,
         PhoneNumber phoneNumber,
         bool isNeutered,
-        DateOnly birthday,
+        DateTime birthday,
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,

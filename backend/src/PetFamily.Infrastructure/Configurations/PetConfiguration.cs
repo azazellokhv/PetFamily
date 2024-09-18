@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Infrastructure.Configurations;
@@ -84,11 +86,11 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                     .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
             });
 
-        builder.ComplexProperty(p => p.AssistanceStatus, a =>
-            {
-                a.Property(x => x.Title)
-                    .IsRequired();
-            });
+        builder.Property(x => x.AssistanceStatus)
+            .IsRequired()
+            .HasConversion(
+                s => s.ToString(),
+                s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s));
     
         builder.ComplexProperty(p => p.Weight, wb =>
         {
@@ -144,9 +146,12 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         {
             plb.ToJson();
 
-            plb.OwnsMany(x => x.Photos, pb =>
+            plb.OwnsMany(x => x.PetPhotos, pb =>
             {
                 pb.Property(pt => pt.FileName)
+                    .HasConversion(
+                        p => p.Path,
+                        value => FilePath.Create(value).Value)
                     .IsRequired()
                     .HasMaxLength(Constants.MAX_FILENAME_LENGH);
 

@@ -38,7 +38,7 @@ public record Error
         if (parts.Length < 3)
             throw new ArgumentException("Invalid serialized format");
         
-        if (Enum.TryParse<ErrorType>(parts[2], out var type) == false)
+        if (System.Enum.TryParse<ErrorType>(parts[2], out var type) == false)
             throw new ArgumentException("Invalid serialized format");
         
         return new Error(parts[0], parts[1], type);
