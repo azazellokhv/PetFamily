@@ -16,5 +16,4 @@ public record AddPetRequest(
     DateTime Birthday,
     bool IsVaccinated,
     AssistanceStatus AssistanceStatus,
-    DetailsForAssistanceDto DetailForAssistance,
-    IFormFileCollection PetPhotos);
+    DetailsForAssistanceDto DetailForAssistance);

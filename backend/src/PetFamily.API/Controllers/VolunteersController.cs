@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using PetFamily.API.Contracts;
 using PetFamily.API.Extensions;
 using PetFamily.Application.DTOs;
-using PetFamily.Application.FileProvider;
 using PetFamily.Application.Volunteers.AddPet;
 using PetFamily.Application.Volunteers.AddPetPhoto;
 using PetFamily.Application.Volunteers.Create;
@@ -88,8 +87,41 @@ public class VolunteersController : ApplicationController
         [FromServices] AddPetHandler handler,
         CancellationToken cancellationToken = default)
     {
-        List<PetPhotoDto> petPhotosDto = [];
+        var command = new AddPetCommand(
+            id,
+            request.Nickname,
+            request.Description,
+            request.Color,
+            request.Health,
+            request.Address,
+            request.Weight,
+            request.Height,
+            request.PhoneNumber,
+            request.IsNeutered,
+            request.Birthday,
+            request.IsVaccinated,
+            request.AssistanceStatus,
+            request.DetailForAssistance,
+            []);
 
+        var result = await handler.Handle(command, cancellationToken);
+
+        if (result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+
+
+    [HttpPost("{volunteerId:guid}/pet/{petId:guid}/photos")]
+    public async Task<ActionResult> AddPetPhoto(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromForm] AddPetPhotoRequest request,
+        [FromServices] AddPetPhotoHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        List<PetPhotoDto> petPhotosDto = [];
         try
         {
             foreach (var photo in request.PetPhotos)
@@ -99,21 +131,9 @@ public class VolunteersController : ApplicationController
                     stream, photo.FileName, false, photo.ContentType));
             }
 
-            var command = new AddPetCommand(
-                id,
-                request.Nickname,
-                request.Description,
-                request.Color,
-                request.Health,
-                request.Address,
-                request.Weight,
-                request.Height,
-                request.PhoneNumber,
-                request.IsNeutered,
-                request.Birthday,
-                request.IsVaccinated,
-                request.AssistanceStatus,
-                request.DetailForAssistance,
+            var command = new AddPetPhotoCommand(
+                volunteerId,
+                petId,
                 petPhotosDto);
 
             var result = await handler.Handle(command, cancellationToken);
@@ -131,26 +151,4 @@ public class VolunteersController : ApplicationController
             }
         }
     }
-
-
-    /*[HttpPost("{volunteerId:guid}/{petId:guid}/photos")]
-    public async Task<ActionResult> AddPetPhoto(
-        [FromRoute] Guid volunteerId,
-        [FromRoute] Guid petId,
-        [FromForm] AddPetPhotoCommand request,
-        [FromServices] AddPetPhotoHandler handler,
-        CancellationToken cancellationToken = default)
-    {
-        await using var stream = file.OpenReadStream();
-
-        var path = Guid.NewGuid().ToString();
-        var fileData = new FileData(stream, "photos", path);
-
-        var result = await handler.Handle(fileData, cancellationToken);
-
-        if (result.IsFailure)
-            return result.Error.ToResponse();
-
-        return Ok(result.Value);
-    }*/
 }

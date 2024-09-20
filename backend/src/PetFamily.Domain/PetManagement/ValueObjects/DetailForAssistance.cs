@@ -29,8 +29,8 @@ public record DetailForAssistance
         string contactPhoneAssistance,
         string bankCardAssistance)
     {
-        if (contactPhoneAssistance.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
-            return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));
+        //if (contactPhoneAssistance.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(contactPhoneAssistance))
+         //   return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));
 
         if (string.IsNullOrWhiteSpace(contactPhoneAssistance))
             return Errors.General.ValueIsInvalid(nameof(contactPhoneAssistance));

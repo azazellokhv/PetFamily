@@ -15,9 +15,9 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.WithEnvironmentName()
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentUserName()
-    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Information)
     .CreateLogger();
 
 builder.Services

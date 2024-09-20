@@ -1,6 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Application.FileProvider;
-using PetFamily.Application.Providers;
 using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.ValueObjects;
@@ -11,16 +9,11 @@ namespace PetFamily.Application.Volunteers.AddPet;
 
 public class AddPetHandler
 {
-    private const string BUCKET_NAME = "photos";
-
-    private readonly IFileProvider _fileProvider;
     private readonly IVolunteersRepository _volunteersRepository;
 
     public AddPetHandler(
-        IFileProvider fileProvider,
         IVolunteersRepository volunteersRepository)
     {
-        _fileProvider = fileProvider;
         _volunteersRepository = volunteersRepository;
     }
 
@@ -34,6 +27,17 @@ public class AddPetHandler
         if (volunteerResult.IsFailure)
             return volunteerResult.Error;
 
+        var pet = InitPet(command);
+
+        volunteerResult.Value.AddPet(pet);
+
+        await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+
+        return pet.Id.Value;
+    }
+    
+    private Pet InitPet(AddPetCommand command)
+    {
         var petId = PetId.NewPetId();
         var nickName = Nickname.Create(command.Nickname).Value;
         var petType = PetType.Create(
@@ -58,34 +62,11 @@ public class AddPetHandler
             command.DetailForAssistance.Description,
             command.DetailForAssistance.ContactPhoneAssistance,
             command.DetailForAssistance.BankCardAssistance).Value;
-
-        List<FileContent> fileContents = [];
-        foreach (var photo in command.PetPhotos)
-        {
-            var extension = Path.GetExtension(photo.FileName);
-
-            var filePath = FilePath.Create(Guid.NewGuid(), extension);
-            if (filePath.IsFailure)
-                return filePath.Error;
-
-            var fileContent = new FileContent(
-                photo.Content, filePath.Value.Path);
-
-            fileContents.Add(fileContent);
-        }
-
-        var fileData = new FileData(fileContents, BUCKET_NAME);
-
-        var uploadResult = await _fileProvider.UploadFiles(fileData, cancellationToken);
-        if (uploadResult.IsFailure)
-            return uploadResult.Error;
-
-        var filePaths = command.PetPhotos
-            .Select(p => FilePath.Create(Guid.NewGuid(), p.FileName).Value);
-
-        var petPhotos = filePaths.Select(p => new PetPhoto(p, false));
-
-        var pet = Pet.Create(
+        var dateOfCreation = DateTime.Now;
+        
+        IEnumerable<PetPhoto> petPhotos = [];
+        
+        var resultPet = Pet.Create(
             petId,
             nickName,
             petType,
@@ -101,12 +82,9 @@ public class AddPetHandler
             command.IsVaccinated,
             command.AssistanceStatus,
             detailForAssistance,
+            dateOfCreation,
             new PetPhotoList(petPhotos)).Value;
-
-        volunteerResult.Value.AddPet(pet);
-
-        await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
-
-        return pet.Id.Value;
+        
+        return resultPet;
     }
 }

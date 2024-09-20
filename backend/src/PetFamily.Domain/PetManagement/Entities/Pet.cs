@@ -32,6 +32,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,
+        DateTime dateOfCreation,
         PetPhotoList petPhotoList)
         : base(petId)
     {
@@ -49,7 +50,8 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         IsVaccinated = isVaccinated;
         AssistanceStatus = assistanceStatus;
         DetailForAssistance = detailForAssistance;
-        DateOfCreation = DateTime.UtcNow;
+        DateOfCreation = dateOfCreation;
+        //DateOfCreation = DateTime.Now.ToUniversalTime();
         PetPhotoList = petPhotoList;
     }
 
@@ -86,6 +88,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         bool isVaccinated,
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,
+        DateTime dateOfCreation,
         PetPhotoList petPhotoList)
     {
         return new Pet(
@@ -104,6 +107,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
             isVaccinated,
             assistanceStatus,
             detailForAssistance,
+            dateOfCreation,
             petPhotoList);
     }
 
@@ -117,5 +121,12 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
     {
         if (_isDeleted == true)
             _isDeleted = false;
+    }
+    
+    public Result UpdatePhotos(PetPhotoList photos)
+    {
+        PetPhotoList = photos;
+        
+        return Result.Success();
     }
 }

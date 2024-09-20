@@ -50,7 +50,7 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.ComplexProperty(p => p.Color, cb =>
         {
             cb.Property(x => x.Value)
-                .IsRequired()
+                .IsRequired(false)
                 .HasMaxLength(Constants.MAX_NAME_LENGTH);
         });
         

@@ -51,6 +51,9 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 
         return Result.Success<Error>();
     }
+    
+    public Pet? GetPetById(PetId petId) =>
+        _pets.FirstOrDefault(x => x.Id == petId);
 
     public void UpdateMainInfo(
         FullName fullName,

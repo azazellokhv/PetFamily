@@ -8,7 +8,7 @@ public record Envelope
     {
         Result = result;
         Errors = errors.ToList();
-        TimeGanerated = DateTime.UtcNow;
+        TimeGanerated = DateTime.Now.ToUniversalTime();
     }
 
     public object? Result { get; }

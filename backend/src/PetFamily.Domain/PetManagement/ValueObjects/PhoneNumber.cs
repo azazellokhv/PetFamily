@@ -17,8 +17,8 @@ public record PhoneNumber
         if (string.IsNullOrWhiteSpace(value))
             return Errors.General.ValueIsInvalid(nameof(PhoneNumber));
 
-        if (value.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(value))
-            return Errors.General.ValueIsInvalid(nameof(PhoneNumber));
+        //if (value.Length != Constants.LENGTH_PHONE_NUMBER && IsDigitsOnly(value))
+           // return Errors.General.ValueIsInvalid(nameof(PhoneNumber));
   
         return new PhoneNumber(value);   
     }
