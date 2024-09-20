@@ -15,12 +15,6 @@ namespace PetFamily.API.Controllers;
 
 public class VolunteersController : ApplicationController
 {
-    private readonly IOptionsSnapshot<MinioOptions> _minioOptions;
-
-    public VolunteersController(IOptionsSnapshot<MinioOptions> minioOptions)
-    {
-        _minioOptions = minioOptions;
-    }
 
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(
