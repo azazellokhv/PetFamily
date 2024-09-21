@@ -20,6 +20,8 @@ public class ApplicationDbContext(IConfiguration configuration) : DbContext
         optionsBuilder.UseLoggerFactory(CreateLoggerFactory());
         optionsBuilder.EnableSensitiveDataLogging();
 
+        //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        
         //optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
     }
 

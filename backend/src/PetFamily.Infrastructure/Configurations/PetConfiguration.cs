@@ -115,7 +115,13 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.Property(p => p.IsNeutered)
             .IsRequired();
         
+        //builder.Property(p => p.Birthday)
+        //    .IsRequired();
+        
         builder.Property(p => p.Birthday)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
             .IsRequired();
         
         builder.Property(p => p.IsVaccinated)
@@ -139,7 +145,13 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .IsRequired(false);
         });
 
+        //builder.Property(p => p.DateOfCreation)
+        //    .IsRequired();
+        
         builder.Property(p => p.DateOfCreation)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
             .IsRequired();
 
         builder.OwnsOne(p => p.PetPhotoList, plb =>

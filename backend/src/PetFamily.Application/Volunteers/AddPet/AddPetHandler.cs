@@ -62,7 +62,7 @@ public class AddPetHandler
             command.DetailForAssistance.Description,
             command.DetailForAssistance.ContactPhoneAssistance,
             command.DetailForAssistance.BankCardAssistance).Value;
-        var dateOfCreation = DateTime.Now;
+        var dateOfCreation = DateTime.Now.ToUniversalTime();
         
         IEnumerable<PetPhoto> petPhotos = [];
         
