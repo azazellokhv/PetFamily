@@ -13,5 +13,11 @@ public record BreedId
     public static BreedId Empty() => new(Guid.Empty);
     
     public static BreedId Create(Guid id) => new(id);
+    public static implicit operator BreedId(Guid id) => new(id);
+    public static implicit operator Guid(BreedId id)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+        return id.Value;
+    }
 
 }

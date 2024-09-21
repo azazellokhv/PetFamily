@@ -2,5 +2,11 @@
 
 public record PetPhotoList
 {
-    public List<PetPhoto> Photos { get; } = default!;
+    private PetPhotoList() { }
+
+    public PetPhotoList(IEnumerable<PetPhoto> petPhotos)
+    {
+        PetPhotos = petPhotos.ToList();
+    }
+    public IReadOnlyList<PetPhoto> PetPhotos { get; }
 }

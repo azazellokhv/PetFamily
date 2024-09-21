@@ -20,7 +20,9 @@ public class ApplicationDbContext(IConfiguration configuration) : DbContext
         optionsBuilder.UseLoggerFactory(CreateLoggerFactory());
         optionsBuilder.EnableSensitiveDataLogging();
 
-        optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
+        //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        
+        //optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

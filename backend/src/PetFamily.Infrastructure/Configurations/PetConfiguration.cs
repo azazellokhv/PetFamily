@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
 
 namespace PetFamily.Infrastructure.Configurations;
@@ -48,7 +50,7 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.ComplexProperty(p => p.Color, cb =>
         {
             cb.Property(x => x.Value)
-                .IsRequired()
+                .IsRequired(false)
                 .HasMaxLength(Constants.MAX_NAME_LENGTH);
         });
         
@@ -84,11 +86,11 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                     .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
             });
 
-        builder.ComplexProperty(p => p.AssistanceStatus, a =>
-            {
-                a.Property(x => x.Title)
-                    .IsRequired();
-            });
+        builder.Property(x => x.AssistanceStatus)
+            .IsRequired()
+            .HasConversion(
+                s => s.ToString(),
+                s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s));
     
         builder.ComplexProperty(p => p.Weight, wb =>
         {
@@ -113,7 +115,13 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.Property(p => p.IsNeutered)
             .IsRequired();
         
+        //builder.Property(p => p.Birthday)
+        //    .IsRequired();
+        
         builder.Property(p => p.Birthday)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
             .IsRequired();
         
         builder.Property(p => p.IsVaccinated)
@@ -137,16 +145,25 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                 .IsRequired(false);
         });
 
+        //builder.Property(p => p.DateOfCreation)
+        //    .IsRequired();
+        
         builder.Property(p => p.DateOfCreation)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
             .IsRequired();
 
         builder.OwnsOne(p => p.PetPhotoList, plb =>
         {
             plb.ToJson();
 
-            plb.OwnsMany(x => x.Photos, pb =>
+            plb.OwnsMany(x => x.PetPhotos, pb =>
             {
                 pb.Property(pt => pt.FileName)
+                    .HasConversion(
+                        p => p.Path,
+                        value => FilePath.Create(value).Value)
                     .IsRequired()
                     .HasMaxLength(Constants.MAX_FILENAME_LENGH);
 
