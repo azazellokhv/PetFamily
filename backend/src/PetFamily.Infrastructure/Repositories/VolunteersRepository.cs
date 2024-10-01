@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
-using PetFamily.Application.Volunteers;
+using PetFamily.Application.Features.VolunteersManagement;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
@@ -20,25 +20,23 @@ public class VolunteersRepository : IVolunteersRepository
     public async Task<Guid> Add(Volunteer volunteer, CancellationToken cancellationToken = default)
     {
         await _dbContext.Volunteers.AddAsync(volunteer, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        
         return volunteer.Id.Value;
     }
     
-    public async Task<Guid> Save(Volunteer volunteer, CancellationToken cancellationToken = default)
+    public Guid Save(Volunteer volunteer, CancellationToken cancellationToken = default)
     {
         _dbContext.Volunteers.Attach(volunteer);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        //await _dbContext.SaveChangesAsync(cancellationToken);
         
         return volunteer.Id.Value;
     }
     
-    public async Task<Guid> Delete(Volunteer volunteer, CancellationToken cancellationToken = default)
+    public Guid Delete(Volunteer volunteer, CancellationToken cancellationToken = default)
     {
         _dbContext.Volunteers.Remove(volunteer);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        //await _dbContext.SaveChangesAsync(cancellationToken);
         
-        return volunteer.Id.Value;
+        return volunteer.Id;
     }
 
     public async Task<Result<Volunteer, Error>> GetById(VolunteerId volunteerId, CancellationToken cancellationToken = default)
