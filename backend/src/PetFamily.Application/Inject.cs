@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using PetFamily.Application.Volunteers.AddPet;
-using PetFamily.Application.Volunteers.AddPetPhoto;
-using PetFamily.Application.Volunteers.Create;
-using PetFamily.Application.Volunteers.Delete;
-using PetFamily.Application.Volunteers.UpdateMainInfo;
+using PetFamily.Application.Features.VolunteersManagement.AddPet;
+using PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
+using PetFamily.Application.Features.VolunteersManagement.Create;
+using PetFamily.Application.Features.VolunteersManagement.Delete;
+using PetFamily.Application.Features.VolunteersManagement.UpdateMainInfo;
 
 namespace PetFamily.Application;
 

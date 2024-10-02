@@ -11,7 +11,7 @@ namespace PetFamily.Infrastructure.Providers;
 public class MinioProvider : IFileProvider
 {
     private const int MAX_DEGREE_OF_PARALLEL_FILES = 5;
-    
+
     private readonly IMinioClient _minioClient;
     private readonly ILogger<MinioProvider> _logger;
 
@@ -46,15 +46,25 @@ public class MinioProvider : IFileProvider
             {
                 await semaphoreSlim.WaitAsync(cancellationToken);
 
+
                 var putObjectArgs = new PutObjectArgs()
                     .WithBucket(fileData.BucketName)
                     .WithStreamData(file.Stream)
                     .WithObjectSize(file.Stream.Length)
                     .WithObject(file.ObjectName);
 
-                var task = _minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
+                var task = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
+                    }
+                    finally
+                    {
+                        semaphoreSlim.Release();
+                    }
+                }, cancellationToken);
 
-                semaphoreSlim.Release();
                 tasks.Add(task);
             }
 
