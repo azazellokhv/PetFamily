@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using PetFamily.Application.DTOs;
 using PetFamily.Application.Validator;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
@@ -13,15 +12,8 @@ public class UpdateMainInfoCommandValidator : AbstractValidator<UpdateMainInfoCo
         RuleFor(r => r.VolunteerId)
             .NotEmpty()
             .WithError(Errors.General.ValueIsRequired());
-    }
-}
-
-public class UpdateMainInfoHandlerDtoValidator : AbstractValidator<UpdateMainInfoDto>
-{
-    public UpdateMainInfoHandlerDtoValidator()
-    {
-       
-        RuleFor(c => c.FullName)
+        
+        RuleFor(r => r.FullName)
             .MustBeValueObject(x => FullName.Create(x.LastName, x.FirstName, x.Patronymic));
     
         RuleFor(c => c.Description).MustBeValueObject(Description.Create);

@@ -2,7 +2,6 @@
 using PetFamily.API.Controllers.Volunteers.Requests;
 using PetFamily.API.Extensions;
 using PetFamily.API.Processors;
-using PetFamily.Application.DTOs;
 using PetFamily.Application.Features.VolunteersManagement.AddPet;
 using PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
 using PetFamily.Application.Features.VolunteersManagement.Create;
@@ -16,10 +15,10 @@ public class VolunteersController : ApplicationController
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(
         [FromServices] CreateVolunteerHandler handler,
-        [FromBody] CreateVolunteerCommand command,
+        [FromBody] CreateVolunteerRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await handler.Handle(command, cancellationToken);
+        var result = await handler.Handle(request.ToCommand(), cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();
@@ -31,12 +30,10 @@ public class VolunteersController : ApplicationController
     public async Task<ActionResult<Guid>> UpdateMainInfo(
         [FromRoute] Guid id,
         [FromServices] UpdateMainInfoHandler handler,
-        [FromBody] UpdateMainInfoDto dto,
+        [FromBody] UpdateMainInfoRequest request,
         CancellationToken cancellationToken = default)
     {
-        var request = new UpdateMainInfoCommand(id, dto);
-
-        var result = await handler.Handle(request, cancellationToken);
+        var result = await handler.Handle(request.ToCommand(id), cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();
@@ -67,23 +64,7 @@ public class VolunteersController : ApplicationController
         [FromServices] AddPetHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var command = new AddPetCommand(
-            id,
-            request.Nickname,
-            request.Description,
-            request.Color,
-            request.Health,
-            request.Address,
-            request.Weight,
-            request.Height,
-            request.PhoneNumber,
-            request.IsNeutered,
-            request.Birthday,
-            request.IsVaccinated,
-            request.AssistanceStatus,
-            request.DetailForAssistance);
-
-        var result = await handler.Handle(command, cancellationToken);
+        var result = await handler.Handle(request.ToCommand(id), cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();

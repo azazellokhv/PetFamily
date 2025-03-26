@@ -14,7 +14,7 @@ public record FilePath
 
     public static Result<FilePath, Error> Create(Guid path, string extension)
     {
-        var fullPath = path + "." + extension;
+        var fullPath = path + extension;
         
         return new FilePath(fullPath);
     }

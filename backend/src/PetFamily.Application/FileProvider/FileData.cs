@@ -1,3 +1,4 @@
 ﻿namespace PetFamily.Application.FileProvider;
 
-public record FileData(IEnumerable<FileContent> Files, string BucketName);
+public record FileData(Stream Stream, FileInfo Info);
+//public record FileData(Stream Stream, string ObjectName);

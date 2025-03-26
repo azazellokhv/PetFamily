@@ -1,4 +1,5 @@
 ﻿using PetFamily.Application.DTOs;
+using PetFamily.Application.Features.VolunteersManagement.AddPet;
 using PetFamily.Domain.Shared.Enum;
 
 namespace PetFamily.API.Controllers.Volunteers.Requests;
@@ -16,4 +17,21 @@ public record AddPetRequest(
     DateTime Birthday,
     bool IsVaccinated,
     AssistanceStatus AssistanceStatus,
-    DetailsForAssistanceDto DetailForAssistance);
+    DetailsForAssistanceDto DetailForAssistance)
+{
+    public AddPetCommand ToCommand(Guid volunteerId) => new(
+        volunteerId,
+        Nickname,
+        Description,
+        Color,
+        Health,
+        Address,
+        Weight,
+        Height,
+        PhoneNumber,
+        IsNeutered,
+        Birthday,
+        IsVaccinated,
+        AssistanceStatus,
+        DetailForAssistance);
+}

@@ -5,7 +5,7 @@ namespace PetFamily.Application.Extensions;
 
 public static class ValidationExtensions
 {
-    public static ErrorList ToList(this ValidationResult validationResult)
+    public static ErrorList ToErrorList(this ValidationResult validationResult)
     {
         var validationErrors = validationResult.Errors;
 

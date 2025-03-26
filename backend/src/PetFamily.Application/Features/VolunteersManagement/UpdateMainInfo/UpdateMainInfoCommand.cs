@@ -4,4 +4,7 @@ namespace PetFamily.Application.Features.VolunteersManagement.UpdateMainInfo;
 
 public record UpdateMainInfoCommand(
     Guid VolunteerId, 
-    UpdateMainInfoDto Dto);
+    FullNameDto FullName, 
+    string Description, 
+    int WorkExperience,
+    string PhoneNumber);

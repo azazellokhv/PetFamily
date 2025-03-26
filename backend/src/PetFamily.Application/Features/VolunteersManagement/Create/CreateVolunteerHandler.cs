@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
@@ -12,21 +14,29 @@ public class CreateVolunteerHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IValidator<CreateVolunteerCommand> _validator;
     private readonly ILogger<CreateVolunteerHandler> _logger;
 
     public CreateVolunteerHandler(
         IVolunteersRepository volunteersRepository,
         IUnitOfWork unitOfWork,
+        IValidator<CreateVolunteerCommand> validator,
         ILogger<CreateVolunteerHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
         _unitOfWork = unitOfWork;
+        _validator = validator;
         _logger = logger;
     }
     
-    public async Task<Result<Guid, Error>> Handle(
-        CreateVolunteerCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<Guid, ErrorList>> Handle(
+        CreateVolunteerCommand command, 
+        CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+                
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
 
         var volunteerId = VolunteerId.NewVolunteerId();
@@ -57,7 +67,7 @@ public class CreateVolunteerHandler
                 .GetByContactPhone(contactPhone, cancellationToken);
 
             if (volunteer.IsSuccess)
-                return Errors.General.AlreadyExist();
+                return Errors.General.AlreadyExist().ToErrorList();
 
             var volunteerResult = Volunteer.Create(
                 volunteerId,
@@ -68,7 +78,7 @@ public class CreateVolunteerHandler
                 socialNetworksList,
                 volunteerDetailsList);
             if (volunteerResult.IsFailure)
-                return volunteerResult.Error;
+                return volunteerResult.Error.ToErrorList();
 
             await _volunteersRepository.Add(volunteerResult.Value, cancellationToken);
             
@@ -88,7 +98,7 @@ public class CreateVolunteerHandler
             
             transaction.Rollback();
 
-            return Error.Failure("Can not add volunteer {volunteerId}", "volunteer.failure");
+            return Error.Failure("Can not add volunteer {volunteerId}", "volunteer.failure").ToErrorList();
         }
         
     }

@@ -24,7 +24,7 @@ public class Errors
 
         public static Error AlreadyExist()
         {
-            return Error.Validation("record.already.exist", "Reoord already exist");
+            return Error.Validation("record.already.exist", "Record already exist");
         }
     }
 }
