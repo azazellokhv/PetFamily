@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.ValueObjects;
@@ -13,15 +15,18 @@ public class AddPetHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IValidator<AddPetCommand> _validator;
     private readonly ILogger<AddPetHandler> _logger;
 
     public AddPetHandler(
         IVolunteersRepository volunteersRepository,
         IUnitOfWork unitOfWork,
+        IValidator<AddPetCommand> validator,
         ILogger<AddPetHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
         _unitOfWork = unitOfWork;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -29,6 +34,10 @@ public class AddPetHandler
         AddPetCommand command,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
         var volunteerResult = await _volunteersRepository
             .GetById(VolunteerId.Create(command.VolunteerId), cancellationToken);
 

@@ -30,7 +30,7 @@ public record Address
         string locality, 
         string street, 
         string buildingNumber,
-        string? comments)
+        string comments)
     {
         if (string.IsNullOrWhiteSpace(country) || country.Length > Constants.MAX_NAME_LENGTH)
             return Errors.General.ValueIsInvalid(nameof(country));
@@ -41,8 +41,8 @@ public record Address
         if (string.IsNullOrWhiteSpace(street) || street.Length > Constants.MAX_NAME_LENGTH)
             return Errors.General.ValueIsInvalid(nameof(street));
         
-        if (string.IsNullOrWhiteSpace(street) || street.Length > Constants.MAX_NAME_LENGTH)
-            return Errors.General.ValueIsInvalid(nameof(street));
+        if (string.IsNullOrWhiteSpace(buildingNumber) || buildingNumber.Length > Constants.MAX_NAME_LENGTH)
+            return Errors.General.ValueIsInvalid(nameof(buildingNumber));
    
         return new Address(country, locality, street, buildingNumber, comments);
     }

@@ -33,7 +33,7 @@ public class UpdateMainInfoHandler
     {
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
-            return validationResult.ToList();   
+            return validationResult.ToErrorList();   
         
         
         var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId, cancellationToken);
@@ -41,13 +41,13 @@ public class UpdateMainInfoHandler
             return volunteerResult.Error.ToErrorList();
 
         var fullName = FullName.Create(
-            command.Dto.FullName.LastName,
-            command.Dto.FullName.FirstName,
-            command.Dto.FullName.Patronymic).Value;
+            command.FullName.LastName,
+            command.FullName.FirstName,
+            command.FullName.Patronymic).Value;
 
-        var description = Description.Create(command.Dto.Description).Value;
-        var workExperience = WorkExperience.Create(command.Dto.WorkExperience).Value;
-        var contactPhone = PhoneNumber.Create(command.Dto.PhoneNumber).Value;
+        var description = Description.Create(command.Description).Value;
+        var workExperience = WorkExperience.Create(command.WorkExperience).Value;
+        var contactPhone = PhoneNumber.Create(command.PhoneNumber).Value;
 
         volunteerResult.Value.UpdateMainInfo(fullName, description, workExperience, contactPhone);
         

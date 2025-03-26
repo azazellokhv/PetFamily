@@ -10,7 +10,7 @@ namespace PetFamily.Domain.PetManagement.AggregateRoot;
 public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 {
     private bool _isDeleted = false;
-    private readonly List<Pet> _pets =[];
+    private readonly List<Pet> _pets = [];
 
     //For EF Сore
     private Volunteer(VolunteerId id) : base(id)
