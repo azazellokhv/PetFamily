@@ -1,10 +1,10 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.Shared;
+using ValueObject = CSharpFunctionalExtensions.ValueObject;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
-public record Position
+public class Position : ValueObject
 {
     public static Position First = new(1);
     private Position(int value)
@@ -24,4 +24,12 @@ public record Position
 
         return new Position(value);
     }
+
+    protected override IEnumerable<IComparable> GetEqualityComponents()
+    {
+        yield return Value;
+    }
+    
+    public static implicit operator int(Position position) => position.Value;
+   
 }

@@ -153,4 +153,9 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         
         return Result.Success<Error>();
     }
+
+    public void Move(Position newPosition)
+    {
+        Position = newPosition;
+    }
 }
