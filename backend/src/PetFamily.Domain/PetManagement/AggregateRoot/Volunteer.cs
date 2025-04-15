@@ -57,7 +57,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 
         return Result.Success<Error>();
     }
-    
+
     public UnitResult<Error> MovePet(Pet pet, Position newPosition)
     {
         var currentPosition = pet.Position;
@@ -67,12 +67,14 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
         var adjustedPosition = AdjustNewPositionIfOutOfRange(newPosition);
         if (adjustedPosition.IsFailure)
             return adjustedPosition.Error;
-        
+
         newPosition = adjustedPosition.Value;
 
         var moveResult = MovePetsBetweenPositions(currentPosition, newPosition);
         if (moveResult.IsFailure)
             return moveResult.Error;
+
+        pet.Move(newPosition);
         
         return Result.Success<Error>();
     }
@@ -81,15 +83,14 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
     {
         if (newPosition.Value <= _pets.Count)
             return newPosition;
-        
+
         var lastPosition = Position.Create(_pets.Count - 1);
         if (lastPosition.IsFailure)
             return lastPosition.Error;
-                    
+
         return lastPosition.Value;
-        
     }
-    
+
     private UnitResult<Error> MovePetsBetweenPositions(Position currentPosition, Position newPosition)
     {
         if (newPosition.Value < currentPosition.Value)
@@ -103,7 +104,6 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
                 var result = petToMove.MoveForvard();
                 if (result.IsFailure)
                     return result.Error;
-
             }
         }
         else if (newPosition.Value > currentPosition.Value)
@@ -117,15 +117,12 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
                 var result = petToMove.MoveBack();
                 if (result.IsFailure)
                     return result.Error;
-
             }
         }
-
+        
         return Result.Success<Error>();
     }
-    
-    
-    
+
 
     public Result<Pet, Error> GetPetById(PetId petId)
     {
