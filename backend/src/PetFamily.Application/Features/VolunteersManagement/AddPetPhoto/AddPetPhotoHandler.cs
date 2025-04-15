@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
 using PetFamily.Application.FileProvider;
-using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Ids;
@@ -52,9 +51,9 @@ public class AddPetPhotoHandler
         if (volunteer.IsFailure)
             return volunteer.Error.ToErrorList();
 
-        var pet = volunteer.Value.GetPetById(command.PetId);
-        if (pet.IsFailure)
-            return pet.Error.ToErrorList();
+        var petResult = volunteer.Value.GetPetById(command.PetId);
+        if (petResult.IsFailure)
+            return petResult.Error.ToErrorList();
 
         try
         {
@@ -82,17 +81,17 @@ public class AddPetPhotoHandler
 
             var petPhotos = filePaths.Select(p => new PetPhoto(p, false));
 
-            pet.Value.UpdatePhotos(new PetPhotoList(petPhotos));
+            petResult.Value.UpdatePhotos(new PetPhotoList(petPhotos));
 
-            volunteer.Value.AddPet(pet.Value);
+            volunteer.Value.AddPet(petResult.Value);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
             transaction.Commit();
             
-            _logger.LogInformation("Success uploaded photos to pet - {id}", pet.Value.Id.Value);
+            _logger.LogInformation("Success uploaded photos to pet - {id}", petResult.Value.Id.Value);
             
-            return pet.Value.Id.Value;
+            return petResult.Value.Id.Value;
         }
         catch (Exception exception)
         {
@@ -100,7 +99,7 @@ public class AddPetPhotoHandler
             
             transaction.Rollback();
             
-            return pet.Value.Id.Value;
+            return petResult.Value.Id.Value;
         }
     }
 }

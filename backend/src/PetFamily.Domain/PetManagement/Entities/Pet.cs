@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Domain.BiologicalSpeciesManagement.Entities;
 using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
@@ -23,7 +22,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         Description description,
         Color color,
         Health health,
-        Address address,
+        Address address,  
         Weight weight,
         Height height,
         PhoneNumber phoneNumber,
@@ -71,6 +70,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
     public DetailForAssistance DetailForAssistance { get; private set; }
     public DateTime DateOfCreation { get; private set; }
     public PetPhotoList? PetPhotoList { get; private set; }
+    public Position Position { get; private set; }
 
     public static Result<Pet> Create(
         PetId petId,
@@ -111,6 +111,9 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
             petPhotoList);
     }
 
+    public void SetPosition(Position position) => 
+        Position = position;
+    
     public void Delete()
     {
         if (_isDeleted == false)
@@ -128,5 +131,26 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         PetPhotoList = photos;
         
         return Result.Success();
+    }
+
+    public UnitResult<Error> MoveForvard()
+    {
+        var newPosition = Position.Forward();
+        if (newPosition.IsFailure)
+            return newPosition.Error;
+        
+        Position = newPosition.Value;
+        
+        return Result.Success<Error>();
+    }
+    public UnitResult<Error> MoveBack()
+    {
+        var newPosition = Position.Back();
+        if (newPosition.IsFailure)
+            return newPosition.Error;
+        
+        Position = newPosition.Value;
+        
+        return Result.Success<Error>();
     }
 }

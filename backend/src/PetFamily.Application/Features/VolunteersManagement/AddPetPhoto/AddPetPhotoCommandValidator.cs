@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using PetFamily.Application.DTOs.Validators;
 using PetFamily.Application.Validator;
 using PetFamily.Domain.Shared;
 
@@ -8,10 +9,10 @@ public class AddPetPhotoCommandValidator : AbstractValidator<AddPetPhotoCommand>
 {
     public AddPetPhotoCommandValidator()
     {
-        RuleFor(d => d.VolunteerId).NotEmpty();
+        RuleFor(d => d.VolunteerId).NotEmpty().WithError(Errors.General.ValueIsRequired());
         
-        RuleFor(d => d.PetId).NotEmpty();
+        RuleFor(d => d.PetId).NotEmpty().WithError(Errors.General.ValueIsRequired());
         
-        RuleFor(d => d.PetPhotos).NotEmpty().WithError(Errors.General.ValueIsInvalid());
+        RuleForEach(d => d.PetPhotos).SetValidator(new UploadFileDtoValidator());
     }
 }

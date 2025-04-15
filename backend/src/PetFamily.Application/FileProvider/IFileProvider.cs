@@ -1,10 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
-using PetFamily.Application.FileProvider;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
-using FileInfo = PetFamily.Application.FileProvider.FileInfo;
 
-namespace PetFamily.Application.Providers;
+namespace PetFamily.Application.FileProvider;
 
 public interface IFileProvider
 {

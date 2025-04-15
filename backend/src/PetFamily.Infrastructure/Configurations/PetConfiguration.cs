@@ -115,9 +115,6 @@ public void Configure(EntityTypeBuilder<Pet> builder)
         builder.Property(p => p.IsNeutered)
             .IsRequired();
         
-        //builder.Property(p => p.Birthday)
-        //    .IsRequired();
-        
         builder.Property(p => p.Birthday)
             .HasConversion(
                 src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
@@ -144,9 +141,6 @@ public void Configure(EntityTypeBuilder<Pet> builder)
             d.Property(da => da.BankCardAssistance)
                 .IsRequired(false);
         });
-
-        //builder.Property(p => p.DateOfCreation)
-        //    .IsRequired();
         
         builder.Property(p => p.DateOfCreation)
             .HasConversion(
@@ -171,6 +165,15 @@ public void Configure(EntityTypeBuilder<Pet> builder)
                     .IsRequired();
             });
         });
+        
+        builder.ComplexProperty(p => p.Position, hb =>
+        {
+            hb.Property(x => x.Value)
+                .IsRequired()
+                .HasColumnName("serial_number");
+            
+        });
+        
         
         builder.Property<bool>("_isDeleted")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
