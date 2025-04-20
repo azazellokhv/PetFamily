@@ -2,4 +2,4 @@
 
 namespace PetFamily.Application.FileProvider;
 
-public record FileInfo(FilePath FilePath, string BucketName);
+//public record FileInfo(FilePath FilePath, string BucketName);

@@ -19,6 +19,6 @@ public interface IFileProvider
         CancellationToken cancellationToken = default);
 
     Task<UnitResult<Error>> RemoveFile(
-        FileInfo fileInfo,
+        FileData fileData,
         CancellationToken cancellationToken = default);
 }

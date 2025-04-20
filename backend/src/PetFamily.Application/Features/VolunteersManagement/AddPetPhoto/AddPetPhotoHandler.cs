@@ -7,7 +7,6 @@ using PetFamily.Application.FileProvider;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Ids;
-using FileInfo = PetFamily.Application.FileProvider.FileInfo;
 
 namespace PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
 
@@ -57,7 +56,7 @@ public class AddPetPhotoHandler
 
         try
         {
-            List<FileData> filesContent = [];
+            List<FileData> filesData = [];
             foreach (var photo in command.PetPhotos)
             {
                 var extension = Path.GetExtension(photo.FileName);
@@ -65,14 +64,13 @@ public class AddPetPhotoHandler
                 var filePath = FilePath.Create(Guid.NewGuid(), extension);
                 if (filePath.IsFailure)
                     return filePath.Error.ToErrorList();
+                
+                var fileData = new FileData(photo.Content, filePath.Value, BUCKET_NAME);
 
-                var fileInfo = new FileInfo(filePath.Value, BUCKET_NAME);
-                var fileData = new FileData(photo.Content, fileInfo);
-
-                filesContent.Add(fileData);
+                filesData.Add(fileData);
             }
 
-            var uploadResult = await _fileProvider.UploadFiles(filesContent, cancellationToken);
+            var uploadResult = await _fileProvider.UploadFiles(filesData, cancellationToken);
             if (uploadResult.IsFailure)
                 return uploadResult.Error.ToErrorList();
 

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using PetFamily.Application.DTOs.Validators;
 using PetFamily.Application.Validator;
 using PetFamily.Domain.Shared;
 
