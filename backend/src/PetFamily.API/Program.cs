@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.Seq(builder.Configuration.GetConnectionString(
-                     "Seq") ?? throw new ArgumentNullException("Seq"))
+    .WriteTo.Seq(builder.Configuration.GetConnectionString("Seq") ?? 
+                 throw new ArgumentNullException("Seq"))
     .Enrich.WithThreadId()
     .Enrich.WithEnvironmentName()
     .Enrich.WithMachineName()

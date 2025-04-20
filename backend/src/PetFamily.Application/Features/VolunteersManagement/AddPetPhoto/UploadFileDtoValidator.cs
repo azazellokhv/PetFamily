@@ -1,8 +1,9 @@
 using FluentValidation;
+using PetFamily.Application.DTOs;
 using PetFamily.Application.Validator;
 using PetFamily.Domain.Shared;
 
-namespace PetFamily.Application.DTOs.Validators;
+namespace PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
 
 public class UploadFileDtoValidator : AbstractValidator<UploadFileDto>
 {
