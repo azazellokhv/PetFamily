@@ -64,8 +64,6 @@ public class AddPetPhoto
         _validatorMock.Setup(v => v.ValidateAsync(command, cancellationToken))
             .ReturnsAsync(new ValidationResult());
         
-        //var loggerMock = new Mock<ILogger<AddPetPhotoHandler>>();
-        
         var handler = new AddPetPhotoHandler(
             _fileProviderMock.Object,
             _unitOfWork,
@@ -81,8 +79,6 @@ public class AddPetPhoto
         result.Value.Should().Be(volunteer.Pets[0].Id.Value);
 
     }
-    
-    
     
     private Volunteer CreateVolunteer()
     {

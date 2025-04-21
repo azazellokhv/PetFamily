@@ -165,7 +165,7 @@ public class VolunteerTests
     public void Move_Pet_Should_Move_Other_Pet_Back_When_New_Position_Is_Last()
     {
         // arrange
-        const int petsCount = 5;
+        const int petsCount = 6;
         var volunteer = CreateVolunteerWithPats(petsCount);
         
         var positionTo = Position.Create(5).Value;
