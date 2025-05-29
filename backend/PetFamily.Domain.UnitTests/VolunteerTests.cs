@@ -3,6 +3,7 @@ using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.ValueObjects;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
 
@@ -259,7 +260,7 @@ public class VolunteerTests
             assistanceStatus,
             detailForAssistance,
             dateOfCreation,
-            new PetPhotoList(petPhotos)).Value;
+            new ValueObjectList<PetPhoto>(petPhotos)).Value;
 
         return resultPet;
     }

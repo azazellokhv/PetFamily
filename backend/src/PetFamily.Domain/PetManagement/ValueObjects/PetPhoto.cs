@@ -1,17 +1,24 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Text.Json.Serialization;
+using CSharpFunctionalExtensions;
 using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 public record PetPhoto
 {
-    public PetPhoto(FilePath fileName, bool isMain)
+    [JsonConstructor]
+    public PetPhoto(FilePath filePath, bool isMain)
     {
-        FileName = fileName;
+        FilePath = filePath;
         IsMain = isMain;
     }
-    public FilePath FileName { get; }
+    public FilePath FilePath { get; }
     public bool IsMain { get; }
+    
+    public static Result<PetPhoto, Error> Create(FilePath filePath, bool isMain)
+    {
+        return new PetPhoto(filePath, isMain);
+    }
     
 
 }

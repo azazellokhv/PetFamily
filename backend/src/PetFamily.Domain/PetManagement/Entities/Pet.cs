@@ -9,12 +9,13 @@ namespace PetFamily.Domain.PetManagement.Entities;
 
 public class Pet : Shared.Entity<PetId>, ISoftDeletable
 {
+    private bool _isDeleted = false;
+    
     //For EF Сore
     private Pet(PetId id) : base(id)
     {
     }
 
-    private bool _isDeleted = false;
     private Pet(
         PetId petId,
         Nickname nickname,
@@ -32,7 +33,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,
         DateTime dateOfCreation,
-        PetPhotoList petPhotoList)
+        ValueObjectList<PetPhoto>? petPhotos)
         : base(petId)
     {
         Nickname = nickname;
@@ -50,8 +51,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         AssistanceStatus = assistanceStatus;
         DetailForAssistance = detailForAssistance;
         DateOfCreation = dateOfCreation;
-        //DateOfCreation = DateTime.Now.ToUniversalTime();
-        PetPhotoList = petPhotoList;
+        PetPhotos = petPhotos ?? new ValueObjectList<PetPhoto>([]);
     }
 
     public Nickname Nickname { get; private set; }
@@ -69,7 +69,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
     public AssistanceStatus AssistanceStatus { get; private set; }
     public DetailForAssistance DetailForAssistance { get; private set; }
     public DateTime DateOfCreation { get; private set; }
-    public PetPhotoList? PetPhotoList { get; private set; }
+    public IReadOnlyList<PetPhoto> PetPhotos { get; private set; }
     public Position Position { get; private set; }
 
     public static Result<Pet> Create(
@@ -89,7 +89,7 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
         AssistanceStatus assistanceStatus,
         DetailForAssistance detailForAssistance,
         DateTime dateOfCreation,
-        PetPhotoList petPhotoList)
+        ValueObjectList<PetPhoto> petPhotoList)
     {
         return new Pet(
             petId,
@@ -126,14 +126,13 @@ public class Pet : Shared.Entity<PetId>, ISoftDeletable
             _isDeleted = false;
     }
     
-    public Result UpdatePhotos(PetPhotoList photos)
+    public void UpdatePhotos(ValueObjectList<PetPhoto> petPhotos)
     {
-        PetPhotoList = photos;
-        
-        return Result.Success();
+        PetPhotos = petPhotos;
     }
 
-    public UnitResult<Error> MoveForvard()
+
+    public UnitResult<Error> MoveForward()
     {
         var newPosition = Position.Forward();
         if (newPosition.IsFailure)

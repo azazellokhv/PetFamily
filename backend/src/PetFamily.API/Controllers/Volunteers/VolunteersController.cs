@@ -2,16 +2,58 @@
 using PetFamily.API.Controllers.Volunteers.Requests;
 using PetFamily.API.Extensions;
 using PetFamily.API.Processors;
-using PetFamily.Application.Features.VolunteersManagement.AddPet;
-using PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
-using PetFamily.Application.Features.VolunteersManagement.Create;
-using PetFamily.Application.Features.VolunteersManagement.Delete;
-using PetFamily.Application.Features.VolunteersManagement.UpdateMainInfo;
+using PetFamily.Application.Abstraction;
+using PetFamily.Application.VolunteersManagement.Features.AddPet;
+using PetFamily.Application.VolunteersManagement.Features.AddPetPhoto;
+using PetFamily.Application.VolunteersManagement.Features.Create;
+using PetFamily.Application.VolunteersManagement.Features.Delete;
+using PetFamily.Application.VolunteersManagement.Features.UpdateMainInfo;
+using PetFamily.Application.VolunteersManagement.Queries.GetPetsWithPagination;
+using PetFamily.Application.VolunteersManagement.Queries.GetVolunteersWithPagination;
 
 namespace PetFamily.API.Controllers.Volunteers;
 
 public class VolunteersController : ApplicationController
 {
+    [HttpGet]
+    public async Task<ActionResult> GetAll(
+        [FromQuery] GetVolunteersWithPaginationRequest request,
+        [FromServices] GetVolunteersWithPaginationHandler handler,
+        CancellationToken cancellationToken) 
+    {
+        var query = request.ToQuery(); 
+        
+        var response = await handler.Handle(query, cancellationToken);
+        
+        return Ok(response);
+    }
+    
+    [HttpGet("pets")]
+    public async Task<ActionResult> GetAllPets(
+        [FromQuery] GetPetsWithPaginationRequest request,
+        [FromServices] GetPetsWithPaginationHandler handler,
+        CancellationToken cancellationToken) 
+    {
+        var query = request.ToQuery(); 
+        
+        var response = await handler.Handle(query, cancellationToken);
+        
+        return Ok(response);
+    }
+
+    [HttpGet("dapper")]
+    public async Task<ActionResult> GetAllDapper(
+        [FromQuery] GetVolunteersWithPaginationRequest request,
+        [FromServices] GetVolunteersWithPaginationHandlerDapper handler,
+        CancellationToken cancellationToken) 
+    {
+        var query = request.ToQuery(); 
+        
+        var response = await handler.Handle(query, cancellationToken);
+        
+        return Ok(response);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(
         [FromServices] CreateVolunteerHandler handler,
@@ -61,7 +103,8 @@ public class VolunteersController : ApplicationController
     public async Task<ActionResult> AddPet(
         [FromRoute] Guid id,
         [FromBody] AddPetRequest request,
-        [FromServices] AddPetHandler handler,
+        //[FromServices] AddPetHandler handler,
+        [FromServices] ICommandHandler<Guid, AddPetCommand> handler,
         CancellationToken cancellationToken = default)
     {
         var result = await handler.Handle(request.ToCommand(id), cancellationToken);

@@ -101,7 +101,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>, ISoftDeletable
 
             foreach (var petToMove in petsToMove)
             {
-                var result = petToMove.MoveForvard();
+                var result = petToMove.MoveForward();
                 if (result.IsFailure)
                     return result.Error;
             }

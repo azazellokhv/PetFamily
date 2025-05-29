@@ -2,9 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
-using PetFamily.Application.FileProvider;
+using PetFamily.Application.Files;
 using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
+using FileInfo = PetFamily.Application.Files.FileInfo;
 
 namespace PetFamily.Infrastructure.Providers;
 
@@ -32,7 +33,7 @@ public class MinioProvider : IFileProvider
         try
         {
             await IfBucketsNotExistCreateBuckets(filesList
-                .Select(file => file.BucketName), cancellationToken);
+                .Select(file => file.FileInfo.BucketName), cancellationToken);
 
             var tasks = filesList.Select(async file =>
                 await PutObject(file, semaphoreSlim, cancellationToken));
@@ -55,40 +56,76 @@ public class MinioProvider : IFileProvider
         }
     }
 
-    public async Task<Result<string, Error>> DeleteFiles(
-        FileMetaData fileMetaData,
+    /*public async Task<Result<string, Error>> RemoveFile(
+        FileInfo fileInfo,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var bucketExist = IsBucketExist(fileMetaData.BucketName, cancellationToken).Result;
-
+            var bucketExist = IsBucketExist(fileInfo.BucketName, cancellationToken).Result;
             if (bucketExist == false)
                 return Error.Failure("bucket.not.found", "Bucket not found");
 
             var objectExistArgs = new PresignedGetObjectArgs()
-                .WithBucket(fileMetaData.BucketName)
-                .WithObject(fileMetaData.ObjectName)
-                .WithExpiry(EXPIRY_VALUE);
+                .WithBucket(fileInfo.BucketName)
+                .WithObject(fileInfo.FilePath.Path);
 
             var objectExistResult = await _minioClient.PresignedGetObjectAsync(objectExistArgs);
-
             if (string.IsNullOrWhiteSpace(objectExistResult))
                 return Error.NotFound("file.not.found", "File not found");
 
             var removeObjectArgs = new RemoveObjectArgs()
-                .WithBucket(fileMetaData.BucketName)
-                .WithObject(fileMetaData.ObjectName);
+                .WithBucket(fileInfo.BucketName)
+                .WithObject(fileInfo.FilePath.Path);
 
             await _minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
 
-            return fileMetaData.ObjectName;
+            return fileInfo.FilePath.Path;
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Fail to remove file from minio");
+            _logger.LogError(exception, "Fail to remove file from minio {path} in bucket {bucket}",
+                fileInfo.FilePath,
+                fileInfo.BucketName);
+            
             return Error.Failure("file.delete", "Fail to delete file from minio");
         }
+    }*/
+
+    public async Task<UnitResult<Error>> RemoveFile(
+        FileInfo fileInfo,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await IfBucketsNotExistCreateBuckets([fileInfo.BucketName], cancellationToken);
+            
+            var statArgs = new StatObjectArgs()
+                .WithBucket(fileInfo.BucketName)
+                .WithObject(fileInfo.FilePath.Path);
+            
+            var objectStat = _minioClient.StatObjectAsync(statArgs, cancellationToken);
+            if (objectStat is null)
+                return Result.Success<Error>();
+            
+            var removeArgs = new RemoveObjectArgs()
+                .WithBucket(fileInfo.BucketName)
+                .WithObject(fileInfo.FilePath.Path);
+            
+            await _minioClient.RemoveObjectAsync(removeArgs, cancellationToken);
+            
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception,
+                "Fail to remove file from minio with path {path} in bucket {bucket}",
+                fileInfo.FilePath.Path,
+                fileInfo.BucketName);
+            
+            return Error.Failure("file.delete", "Fail to delete file from minio");
+        }
+
+        return Result.Success<Error>();
     }
 
     public async Task<Result<string, Error>> GetUrlFileByName(
@@ -103,8 +140,7 @@ public class MinioProvider : IFileProvider
 
             var objectExistArgs = new PresignedGetObjectArgs()
                 .WithBucket(fileMetaData.BucketName)
-                .WithObject(fileMetaData.ObjectName)
-                .WithExpiry(EXPIRY_VALUE);
+                .WithObject(fileMetaData.ObjectName);
 
             var objectExistUrl = await _minioClient.PresignedGetObjectAsync(objectExistArgs);
             if (string.IsNullOrWhiteSpace(objectExistUrl))
@@ -118,44 +154,6 @@ public class MinioProvider : IFileProvider
             return Error.Failure("file.download", "Fail to download file in minio");
         }
     }
-
-    public async Task<UnitResult<Error>> RemoveFile(
-        FileData fileData,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (await IsBucketExist(fileData.BucketName, cancellationToken) == false)
-                return Error.Failure("bucket.not.found", "Bucket not found");
-
-            var statArgs = new StatObjectArgs()
-                .WithBucket(fileData.BucketName)
-                .WithObject(fileData.FilePath.Path);
-
-            var objectStat = await _minioClient.StatObjectAsync(statArgs, cancellationToken);
-            if (objectStat is null)
-                return Error.NotFound("file.not.found", "File not found");
-
-            var removeObjectArgs = new RemoveObjectArgs()
-                .WithBucket(fileData.BucketName)
-                .WithObject(fileData.FilePath.Path);
-
-            await _minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
-            
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception,
-                "Fail to remove file in minio with path {path} in bucket {bucket}",
-                fileData.FilePath.Path,
-                fileData.BucketName);
-
-            return Error.Failure("file.remove", "Fail to remove file in minio");
-        }
-        
-        return Result.Success<Error>();
-    }
-
 
     private async Task IfBucketsNotExistCreateBuckets(
         IEnumerable<string> buckets,
@@ -205,21 +203,22 @@ public class MinioProvider : IFileProvider
         await semaphoreSlim.WaitAsync(cancellationToken);
 
         var putObjectArgs = new PutObjectArgs()
-            .WithBucket(fileData.BucketName)
+            .WithBucket(fileData.FileInfo.BucketName)
             .WithStreamData(fileData.Stream)
             .WithObjectSize(fileData.Stream.Length)
-            .WithObject(fileData.FilePath.Path);
+            .WithObject(fileData.FileInfo.FilePath.Path);
 
         try
         {
             await _minioClient.PutObjectAsync(putObjectArgs, cancellationToken);
 
-            return fileData.FilePath;
+            return fileData.FileInfo.FilePath;
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Fail to upload file with path {path} in bucket {bucket}",
-                fileData.FilePath.Path, fileData.BucketName);
+                fileData.FileInfo.FilePath.Path, 
+                fileData.FileInfo.BucketName);
 
             return Error.Failure("file.upload", "Fail to upload file in minio");
         }

@@ -1,10 +1,12 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Text.Json.Serialization;
+using CSharpFunctionalExtensions;
 using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.PetManagement.ValueObjects;
 
 public record FilePath
 {
+    [JsonConstructor]
     private FilePath(string path)
     {
         Path = path; 

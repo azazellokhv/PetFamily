@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using PetFamily.API;
+using PetFamily.API.Extensions;
 using PetFamily.API.Middlewares;
 using PetFamily.Application;
 using PetFamily.Infrastructure;
+using PetFamily.Infrastructure.DbContexts;
 using Serilog;
 using Serilog.Events;
 
@@ -33,8 +36,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    
-    //await app.ApplyMigration();
+    await app.ApplyMigration();
 }
 
 app.UseSerilogRequestLogging();
@@ -44,3 +46,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
