@@ -1,0 +1,208 @@
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PetFamily.Application.DTOs.Queries;
+using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Domain.PetManagement.ValueObjects;
+using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.Enum;
+using PetFamily.Domain.Shared.Ids;
+
+namespace PetFamily.Infrastructure.Configurations.Write;
+
+public class PetConfiguration : IEntityTypeConfiguration<Pet>
+{
+    public void Configure(EntityTypeBuilder<Pet> builder)
+    {
+        builder.ToTable("pets");
+
+        builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Id)
+            .HasConversion(
+                id => id.Value,
+                value => PetId.Create(value));
+
+        builder.ComplexProperty(p => p.Nickname, nb =>
+        {
+            nb.Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+        });
+
+        builder.ComplexProperty(p => p.PetType, pt =>
+        {
+            pt.Property(bs => bs.BiologicalSpeciesId)
+                .HasConversion(
+                    id => id.Value,
+                    value => BiologicalSpeciesId.Create(value))
+                .IsRequired();
+
+            pt.Property(b => b.BreedId)
+                .IsRequired();
+        });
+
+        builder.ComplexProperty(p => p.Description, db =>
+        {
+            db.Property(x => x.Value)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        });
+
+        builder.ComplexProperty(p => p.Color, cb =>
+        {
+            cb.Property(x => x.Value)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+        });
+
+        builder.ComplexProperty(p => p.Health, h =>
+        {
+            h.Property(x => x.IsHealthy)
+                .IsRequired();
+
+            h.Property(x => x.DescriptionDisease)
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        });
+
+        builder.ComplexProperty(p => p.Address, a =>
+        {
+            a.Property(x => x.Country)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+
+            a.Property(x => x.Locality)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+
+            a.Property(x => x.Street)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+
+            a.Property(x => x.BuildingNumber)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+
+            a.Property(x => x.Comments)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+        });
+
+        builder.Property(x => x.AssistanceStatus)
+            .IsRequired()
+            .HasConversion(
+                s => s.ToString(),
+                s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s));
+
+        builder.ComplexProperty(p => p.Weight, wb =>
+        {
+            wb.Property(x => x.Value)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_WEIGHT);
+        });
+
+        builder.ComplexProperty(p => p.Height, hb =>
+        {
+            hb.Property(x => x.Value)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_HEIGHT);
+        });
+
+        builder.ComplexProperty(p => p.PhoneNumber, cb =>
+        {
+            cb.Property(x => x.Value)
+                .IsRequired();
+        });
+
+        builder.Property(p => p.IsNeutered)
+            .IsRequired();
+
+        builder.Property(p => p.Birthday)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
+            .IsRequired();
+
+        builder.Property(p => p.IsVaccinated)
+            .IsRequired();
+
+
+        builder.ComplexProperty(p => p.DetailForAssistance, d =>
+        {
+            d.Property(da => da.Title)
+                .IsRequired()
+                .HasMaxLength(Constants.MAX_NAME_LENGTH);
+
+            d.Property(da => da.Description)
+                .IsRequired(false)
+                .HasMaxLength(Constants.MAX_DESCRIPTION_LENGTH);
+
+            d.Property(da => da.ContactPhoneAssistance)
+                .IsRequired();
+
+            d.Property(da => da.BankCardAssistance)
+                .IsRequired(false);
+        });
+
+        builder.Property(p => p.DateOfCreation)
+            .HasConversion(
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc))
+            .IsRequired();
+
+        builder.Property(p => p.PetPhotos)
+            .HasConversion(
+                photos => JsonSerializer.Serialize(
+                    photos.Select(p => new PetPhotoDto
+                    {
+                        FilePath = p.FilePath.Path,
+                        IsMain = p.IsMain
+                    }),
+                    JsonSerializerOptions.Default),
+                
+                json => (JsonSerializer.Deserialize<IEnumerable<PetPhotoDto>>(
+                        json, JsonSerializerOptions.Default) ?? Array.Empty<PetPhotoDto>())
+                    .Select(dto => PetPhoto
+                        .Create(FilePath.Create(dto.FilePath).Value, dto.IsMain).Value)
+                    .ToList(),
+                
+                new ValueComparer<IReadOnlyList<PetPhoto>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()))
+            .HasColumnType("jsonb")
+            .HasColumnName("pet_photo_list");
+            
+
+
+        /*builder.OwnsOne(p => p.PetPhotos, plb =>
+        {
+            plb.ToJson();
+
+            plb.OwnsMany(x => x.PetPhotos, pb =>
+            {
+                pb.Property(pt => pt.FilePath)
+                    .HasConversion(
+                        p => p.Path,
+                        value => FilePath.Create(value).Value)
+                    .IsRequired()
+                    .HasMaxLength(Constants.MAX_FILENAME_LENGH);
+
+                pb.Property(pt => pt.IsMain)
+                    .IsRequired();
+            });
+        });*/
+
+        builder.ComplexProperty(p => p.Position, hb =>
+        {
+            hb.Property(x => x.Value)
+                .IsRequired()
+                .HasColumnName("serial_number");
+        });
+
+        builder.Property<bool>("_isDeleted")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnName("is_deleted");
+    }
+}

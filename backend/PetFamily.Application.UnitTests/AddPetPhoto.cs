@@ -7,9 +7,10 @@ using Moq;
 using NSubstitute;
 using PetFamily.Application.Database;
 using PetFamily.Application.DTOs;
-using PetFamily.Application.Features.VolunteersManagement;
-using PetFamily.Application.Features.VolunteersManagement.AddPetPhoto;
-using PetFamily.Application.FileProvider;
+using PetFamily.Application.Files;
+using PetFamily.Application.Messaging;
+using PetFamily.Application.VolunteersManagement;
+using PetFamily.Application.VolunteersManagement.Features.AddPetPhoto;
 using PetFamily.Domain.BiologicalSpeciesManagement.ValueObjects;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.Entities;
@@ -17,12 +18,14 @@ using PetFamily.Domain.PetManagement.ValueObjects;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.Enum;
 using PetFamily.Domain.Shared.Ids;
+using FileInfo = PetFamily.Application.Files.FileInfo;
 
 namespace PetFamily.Application.UnitTests;
 
 public class AddPetPhoto
 {
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
+    private readonly IMessageQueue<IEnumerable<FileInfo>> _messageQueue = Substitute.For<IMessageQueue<IEnumerable<FileInfo>>>();
     
     private readonly Mock<IFileProvider> _fileProviderMock = new();
     private readonly Mock<IVolunteersRepository> _volunteersRepositoryMock = new();
@@ -69,6 +72,7 @@ public class AddPetPhoto
             _unitOfWork,
             _volunteersRepositoryMock.Object,
             _validatorMock.Object,
+            _messageQueue,
             _loggerMock.Object); 
         
         // act
@@ -151,7 +155,7 @@ public class AddPetPhoto
             assistanceStatus,
             detailForAssistance,
             dateOfCreation,
-            new PetPhotoList(petPhotos)).Value;
+            new ValueObjectList<PetPhoto>(petPhotos)).Value;
 
         return resultPet;
     }
